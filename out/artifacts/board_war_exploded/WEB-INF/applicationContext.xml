@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <!-- dataSource -->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+        <property name="url" value="jdbc:mysql://ndgndg91.synology.me:3307/test?useSSL=false&amp;serverTimezone=Asia/Seoul"/>
+        <property name="username" value="test"/>
+        <property name="password" value="test"/>
+    </bean>
+
+    <!-- sessionFactory -->
+    <bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="configLocation" value="/WEB-INF/mybatis-config.xml"/>
+        <property name="dataSource" ref="dataSource"/>
+        <property name="mapperLocations" value="/WEB-INF/mappers/**/*.xml" />
+    </bean>
+    <bean class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg ref="sqlSession"/>
+    </bean>
+
+    <!-- Google 소셜 로그인 연결 설정 -->
+    <bean id="googleConnectionFactory"
+          class="org.springframework.social.google.connect.GoogleConnectionFactory">
+        <constructor-arg
+                value="337183749653-8na0q9g91v3mf808bjuve33vdce4q9b2.apps.googleusercontent.com" />
+        <constructor-arg value="JRU2Y2w33b4GK3WHCFEZ_u79" />
+    </bean>
+
+
+    <bean id="googleOAuth2Parameters"
+          class="org.springframework.social.oauth2.OAuth2Parameters">
+        <property name="scope"
+                  value="email"/>
+        <property name="redirectUri"
+                  value="http://localhost:8080/auth/google/callback" />
+    </bean>
+
+    <bean id="authInfo" class="com.ndgndg91.auth.AuthInfo">
+        <constructor-arg
+                value="337183749653-8na0q9g91v3mf808bjuve33vdce4q9b2.apps.googleusercontent.com" />
+        <constructor-arg value="JRU2Y2w33b4GK3WHCFEZ_u79" />
+
+    </bean>
+</beans>
