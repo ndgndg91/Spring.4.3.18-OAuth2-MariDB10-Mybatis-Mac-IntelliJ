@@ -66,7 +66,8 @@
 
             <div class="flex-c p-b-112">
                 <a href="${kakao_url}" class="login100-social-item">
-                    <i class="fa fa-facebook-f"></i>
+<%--                    <i class="fa fa-facebook-f"></i>--%>
+                    <img src="/static/images/icons/kakaolink_btn_medium/kakaolink_btn_medium.png"/>
                 </a>
 
                 <a href="${google_url}" class="login100-social-item">

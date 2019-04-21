@@ -26,15 +26,14 @@ import java.util.List;
 @Log4j
 @Controller
 public class KaKaoController {
-    private final static String K_CLIENT_ID = "";
-    private final static String K_REDIRECT_URI = "";
+    private final static String K_CLIENT_ID = "e604e6d3fe22ec52f468680d8a0018ee";
+    private final static String K_REDIRECT_URI = "http://localhost:8080/auth/kakao/redirect";
     public final static String K_URL = "https://kauth.kakao.com/oauth/authorize?"
             + "client_id=" + K_CLIENT_ID + "&redirect_uri="
             + K_REDIRECT_URI + "&response_type=code";
 
 
     public String getAccessToken(String authorize_code) {
-
         final String RequestUrl = "https://kauth.kakao.com/oauth/token";
         final List<NameValuePair> postParams = new ArrayList<NameValuePair>();
         postParams.add(new BasicNameValuePair("grant_type", "authorization_code"));
@@ -58,21 +57,16 @@ public class KaKaoController {
             returnNode = mapper.readTree(response.getEntity().getContent());
 
         } catch (UnsupportedEncodingException | ClientProtocolException e) {
-
             e.printStackTrace();
-
         } catch (IOException e) {
-
             e.printStackTrace();
-
         } finally {
             // clear resources
         }
         return returnNode.get("access_token").toString();
     }
 
-    public JsonNode getKakaoUserInfo(String authorize_code) {
-
+    public JsonNode getKakaoUserInfo(String authorize_code, HttpSession session) {
         final String RequestUrl = "https://kapi.kakao.com/v1/user/me";
         //String CLIENT_ID = K_CLIENT_ID; // REST API KEY
         //String REDIRECT_URI = K_REDIRECT_URI; // 리다이렉트 URI
@@ -80,11 +74,11 @@ public class KaKaoController {
         final HttpClient client = HttpClientBuilder.create().build();
         final HttpPost post = new HttpPost(RequestUrl);
         String accessToken = getAccessToken(authorize_code);
+        session.setAttribute("KaKaoAccessToken", accessToken);
         // add header
         post.addHeader("Authorization", "Bearer " + accessToken);
 
         JsonNode returnNode = null;
-
         try {
 
             final HttpResponse response = client.execute(post);
@@ -96,30 +90,78 @@ public class KaKaoController {
             ObjectMapper mapper = new ObjectMapper();
             returnNode = mapper.readTree(response.getEntity().getContent());
         } catch (UnsupportedEncodingException | ClientProtocolException e) {
-
             e.printStackTrace();
         } catch (IOException e) {
-
             e.printStackTrace();
         } finally {
-
             // clear resources
         }
         return returnNode;
     }
 
+    public JsonNode kakaoLogout(String authorize_code) {
+        final String RequestUrl = "https://kapi.kakao.com/v1/user/logout";
+
+        final HttpClient client = HttpClientBuilder.create().build();
+
+        final HttpPost post = new HttpPost(RequestUrl);
+
+        post.addHeader("Authorization", "Bearer " + authorize_code);
+
+        JsonNode returnNode = null;
+
+        try {
+
+            final HttpResponse response = client.execute(post);
+            log.info("kakao logout : " + response.getStatusLine().getStatusCode());
+
+            ObjectMapper mapper = new ObjectMapper();
+
+            returnNode = mapper.readTree(response.getEntity().getContent());
+
+        } catch (UnsupportedEncodingException | ClientProtocolException e) {
+
+            e.printStackTrace();
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        } finally {
+
+        }
+
+        return returnNode;
+
+    }
+
+
     @RequestMapping(value = "/auth/kakao/redirect")
     public String getKakaoSignIn(ModelMap model, @RequestParam("code") String code, HttpSession session) throws Exception {
 
-        JsonNode userInfo = getKakaoUserInfo(code);
-
+        JsonNode userInfo = getKakaoUserInfo(code, session);
+        session.setAttribute("kakaoUserInfo", userInfo);
         log.info(userInfo);
-
         Iterator iterator = userInfo.iterator();
-        while (iterator.hasNext()){
+        while (iterator.hasNext()) {
             log.info(iterator.next());
         }
 
+        return "redirect:/";
+    }
+
+    @RequestMapping(value = "/auth/kakao/logout")
+    public String kakaoLogout(HttpSession session) {
+        log.info("kakao Logout");
+        String KaKaoAccessToken = (String) session.getAttribute("KaKaoAccessToken");
+        session.removeAttribute("KaKaoAccessToken");
+        session.removeAttribute("kakaoUserInfo");
+        log.info("accessToken : " + KaKaoAccessToken);
+        JsonNode afterLogout = kakaoLogout(KaKaoAccessToken);
+        Iterator iterator = afterLogout.iterator();
+        while (iterator.hasNext()) {
+            log.info(iterator.next());
+        }
         return "redirect:/";
     }
 }
