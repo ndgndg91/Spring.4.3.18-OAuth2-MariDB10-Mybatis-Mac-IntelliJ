@@ -164,4 +164,10 @@ public class KaKaoController {
         }
         return "redirect:/";
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/keyboard", method = RequestMethod.GET)
+    public ButtonVO keyboard() {
+        return new ButtonVO(new String[] {"test1", "test2", "test3"});
+    }
 }
