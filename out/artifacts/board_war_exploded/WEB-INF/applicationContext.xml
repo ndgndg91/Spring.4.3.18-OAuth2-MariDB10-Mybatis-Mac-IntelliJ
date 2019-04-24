@@ -6,7 +6,8 @@
     <!-- dataSource -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://ndgndg91.synology.me:3307/test?useSSL=false&amp;serverTimezone=Asia/Seoul&amp;autoReconnection=true"/>
+        <property name="url"
+                  value="jdbc:mysql://ndgndg91.synology.me:3307/test?useSSL=false&amp;serverTimezone=Asia/Seoul"/>
         <property name="username" value="test"/>
         <property name="password" value="test"/>
     </bean>
@@ -15,7 +16,7 @@
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="configLocation" value="/WEB-INF/mybatis-config.xml"/>
         <property name="dataSource" ref="dataSource"/>
-        <property name="mapperLocations" value="/WEB-INF/mappers/**/*.xml" />
+        <property name="mapperLocations" value="/WEB-INF/mappers/**/*.xml"/>
     </bean>
     <bean class="org.mybatis.spring.SqlSessionTemplate">
         <constructor-arg ref="sqlSession"/>
@@ -25,23 +26,27 @@
     <bean id="googleConnectionFactory"
           class="org.springframework.social.google.connect.GoogleConnectionFactory">
         <constructor-arg
-                value="337183749653-8na0q9g91v3mf808bjuve33vdce4q9b2.apps.googleusercontent.com" />
-        <constructor-arg value="JRU2Y2w33b4GK3WHCFEZ_u79" />
+                value="337183749653-8na0q9g91v3mf808bjuve33vdce4q9b2.apps.googleusercontent.com"/>
+        <constructor-arg value="JRU2Y2w33b4GK3WHCFEZ_u79"/>
     </bean>
 
 
     <bean id="googleOAuth2Parameters"
           class="org.springframework.social.oauth2.OAuth2Parameters">
         <property name="scope"
-                  value="email"/>
+                  value="email profile"/>
         <property name="redirectUri"
-                  value="http://localhost:8080/auth/google/callback" />
+                  value="http://localhost:8080/auth/google/callback"/>
     </bean>
 
     <bean id="authInfo" class="com.ndgndg91.auth.AuthInfo">
         <constructor-arg
-                value="337183749653-8na0q9g91v3mf808bjuve33vdce4q9b2.apps.googleusercontent.com" />
-        <constructor-arg value="JRU2Y2w33b4GK3WHCFEZ_u79" />
+                value="337183749653-8na0q9g91v3mf808bjuve33vdce4q9b2.apps.googleusercontent.com"/>
+        <constructor-arg value="JRU2Y2w33b4GK3WHCFEZ_u79"/>
+    </bean>
 
+    <bean id="freeMarkerConfigurationFactory" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
+        <property name="templateLoaderPath" value="/WEB-INF/freemarker"/>
+        <property name="preferFileSystemAccess" value="false"/>
     </bean>
 </beans>

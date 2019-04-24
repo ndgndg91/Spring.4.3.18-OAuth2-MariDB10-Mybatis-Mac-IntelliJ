@@ -28,6 +28,8 @@
     ${sessionScope.googleName} 님 방가방가<br/>
     <a href="/auth/google/logout">로그아웃</a>
   </c:if>
+  <button onclick="location.href='/mail/test'">메일 테스트</button>
+  <button onclick="location.href='/mail/freemarker'">freemarker 메일 테스트</button>
   </body>
 </html>
 

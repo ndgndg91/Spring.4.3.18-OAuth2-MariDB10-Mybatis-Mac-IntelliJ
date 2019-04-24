@@ -29,7 +29,7 @@ import java.util.List;
 @Log4j
 @Controller
 public class KaKaoController {
-    private final static String K_CLIENT_ID = "e604e6d3fe22ec52f468680d8a0018ee";
+    private final static String K_CLIENT_ID = "";
     private final static String K_REDIRECT_URI = "http://localhost:8080/auth/kakao/redirect";
     public final static String K_URL = "https://kauth.kakao.com/oauth/authorize?"
             + "client_id=" + K_CLIENT_ID + "&redirect_uri="
