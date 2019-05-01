@@ -12,6 +12,7 @@ public class CheckLocaleInterceptor extends HandlerInterceptorAdapter {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        log.info(request.getHeader("User-Agent"));
         log.info(request.getQueryString());
         log.info(request.getParameter("lang"));
         log.info(request.getLocale().toString());

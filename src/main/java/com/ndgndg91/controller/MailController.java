@@ -45,7 +45,7 @@ public class MailController {
         MailHandler mailHandler = new MailHandler(javaMailSender);
         mailHandler.setSubject("동길이가 동길이에게 테스트!");
         mailHandler.setFrom("ndgndg91@gmail.com", "남동길");
-        mailHandler.setTo("kimdb35@naver.com");
+        mailHandler.setTo("donggil@sixshop.com");
         mailHandler.setText(contents);
         mailHandler.send();
         return "redirect:/";

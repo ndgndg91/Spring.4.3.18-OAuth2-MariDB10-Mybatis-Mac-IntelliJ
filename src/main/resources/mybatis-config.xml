@@ -11,4 +11,8 @@
         <setting name="autoMappingBehavior" value="PARTIAL"/>
         <setting name="mapUnderscoreToCamelCase" value="true"/>
     </settings>
+
+    <typeAliases>
+        <typeAlias type="com.ndgndg91.model.MemberDTO" alias="Member"/>
+    </typeAliases>
 </configuration>

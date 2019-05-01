@@ -29,7 +29,7 @@ import java.util.List;
 @Log4j
 @Controller
 public class KaKaoController {
-    private final static String K_CLIENT_ID = "";
+    private final static String K_CLIENT_ID = "e604e6d3fe22ec52f468680d8a0018ee";
     private final static String K_REDIRECT_URI = "http://localhost:8080/auth/kakao/redirect";
     public final static String K_URL = "https://kauth.kakao.com/oauth/authorize?"
             + "client_id=" + K_CLIENT_ID + "&redirect_uri="
@@ -104,9 +104,7 @@ public class KaKaoController {
 
     public JsonNode kakaoLogout(String authorize_code) {
         final String RequestUrl = "https://kapi.kakao.com/v1/user/logout";
-
         final HttpClient client = HttpClientBuilder.create().build();
-
         final HttpPost post = new HttpPost(RequestUrl);
 
         post.addHeader("Authorization", "Bearer " + authorize_code);
@@ -114,7 +112,6 @@ public class KaKaoController {
         JsonNode returnNode = null;
 
         try {
-
             final HttpResponse response = client.execute(post);
             log.info("kakao logout : " + response.getStatusLine().getStatusCode());
 
@@ -123,19 +120,14 @@ public class KaKaoController {
             returnNode = mapper.readTree(response.getEntity().getContent());
 
         } catch (UnsupportedEncodingException | ClientProtocolException e) {
-
             e.printStackTrace();
-
         } catch (IOException e) {
-
             e.printStackTrace();
-
         } finally {
 
         }
 
         return returnNode;
-
     }
 
 
@@ -149,9 +141,9 @@ public class KaKaoController {
         while (iterator.hasNext()) {
             log.info(iterator.next());
         }
-
         return "redirect:/";
     }
+
 
     @RequestMapping(value = "/auth/kakao/logout")
     public String kakaoLogout(HttpSession session) {
