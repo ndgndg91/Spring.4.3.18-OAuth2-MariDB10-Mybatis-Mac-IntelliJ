@@ -2,7 +2,13 @@ package com.ndgndg91.controller;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.ndgndg91.model.ButtonVO;
+import com.ndgndg91.model.MemberDTO;
+import com.ndgndg91.model.enums.LoginType;
+import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -12,6 +18,7 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +32,7 @@ import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @Log4j
 @Controller
@@ -34,6 +42,9 @@ public class KaKaoController {
     public final static String K_URL = "https://kauth.kakao.com/oauth/authorize?"
             + "client_id=" + K_CLIENT_ID + "&redirect_uri="
             + K_REDIRECT_URI + "&response_type=code";
+
+    @Autowired
+    private MemberService memberService;
 
 
     public String getAccessToken(String authorize_code) {
@@ -130,17 +141,33 @@ public class KaKaoController {
         return returnNode;
     }
 
+    private MemberDTO parseKakaoJson(JsonNode userInfo) {
+        JsonParser kakaoParser = new JsonParser();
+        JsonElement outer = kakaoParser.parse(userInfo.toString());
+        String id = outer.getAsJsonObject().get("id").getAsString();
+        log.info("kakao Parse : " + id);
+        JsonObject properties = outer.getAsJsonObject().get("properties").getAsJsonObject();
+        String profileImageUrl = properties.get("profile_image").getAsString();
+        String nickName = properties.get("nickname").getAsString();
+        String thumbnailImageUrl = properties.get("thumbnail_image").getAsString();
+        log.info("profileImageUrl : " + profileImageUrl);
+        log.info("nickName : " + nickName);
+        log.info("thumbnailImageUrl : " + thumbnailImageUrl);
+        return new MemberDTO.Builder(id, LoginType.KAKAO.toString()).nick(nickName).pictureUrl(profileImageUrl).loginType(LoginType.KAKAO.toString()).build();
+    }
+
 
     @RequestMapping(value = "/auth/kakao/redirect")
     public String getKakaoSignIn(ModelMap model, @RequestParam("code") String code, HttpSession session) throws Exception {
 
         JsonNode userInfo = getKakaoUserInfo(code, session);
         session.setAttribute("kakaoUserInfo", userInfo);
-        log.info(userInfo);
+        MemberDTO kakaoUserInfo = parseKakaoJson(userInfo);
+        Optional<MemberDTO> optionalMember = Optional.ofNullable(memberService.selectOneMemberById(kakaoUserInfo.getId()));
+        if (!optionalMember.isPresent())
+            memberService.insertMemberExcludePwParameter(kakaoUserInfo);
         Iterator iterator = userInfo.iterator();
-        while (iterator.hasNext()) {
-            log.info(iterator.next());
-        }
+        printIterator(iterator);
         return "redirect:/";
     }
 
@@ -154,10 +181,14 @@ public class KaKaoController {
         log.info("accessToken : " + KaKaoAccessToken);
         JsonNode afterLogout = kakaoLogout(KaKaoAccessToken);
         Iterator iterator = afterLogout.iterator();
+        printIterator(iterator);
+        return "redirect:/";
+    }
+
+    private void printIterator(Iterator iterator) {
         while (iterator.hasNext()) {
             log.info(iterator.next());
         }
-        return "redirect:/";
     }
 
     @ResponseBody
