@@ -1,9 +1,14 @@
 package com.ndgndg91.model;
 
 import com.ndgndg91.model.enums.LoginType;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 
-@Data
+
+@Getter
+@EqualsAndHashCode(of = {"id"})
+@ToString(of = {"id", "email", "nick", "loginType", "subId"})
 public class MemberDTO {
     private String id;
     private String email;
