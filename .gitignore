@@ -9,3 +9,4 @@ projectName.iml
 /local.properties
 target/
 lib/
+out/
