@@ -12,12 +12,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
-import org.springframework.social.google.connect.GoogleConnectionFactory;
-import org.springframework.social.oauth2.GrantType;
-import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -45,24 +41,7 @@ public class GoogleController {
     private AuthInfo authInfo;
 
     @Autowired
-    private GoogleConnectionFactory googleConnectionFactory;
-
-    @Autowired
     private OAuth2Parameters googleOAuth2Parameters;
-
-    @RequestMapping("/login")
-    public String enterLogin(Model model){
-        //URL을 생성한다.
-        OAuth2Operations oauthOperations = googleConnectionFactory.getOAuthOperations();
-        String url = oauthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, googleOAuth2Parameters);
-
-        log.info("/googleLogin, url : " + url);
-        log.info("/kakaoLogin, url : " + KaKaoController.K_URL);
-        model.addAttribute("google_url", url);
-        model.addAttribute("kakao_url", KaKaoController.K_URL);
-        log.info(memberService.selectNow());
-        return "/member/login";
-    }
 
     @RequestMapping(value = "/auth/google/callback")
     public String doSessionAssignActionPage(HttpServletRequest request, @RequestParam Map<String, Object> paramMap,
@@ -95,9 +74,7 @@ public class GoogleController {
         // 세번째 부분에는 위변조를 방지하기 위한 특정 알고리즘으로 암호화되어 사이닝에 사용한다.
         //Base 64로 인코딩 되어 있으므로 디코딩한다.
 
-        Iterator accessIterator = responseMap.keySet().iterator();
-        while (accessIterator.hasNext()){
-            Object key = accessIterator.next();
+        for (Object key : responseMap.keySet()) {
             log.info(key + " : " + responseMap.get(key));
         }
         session.setAttribute("googleAccessToken", responseMap.get("access_token"));
@@ -115,9 +92,7 @@ public class GoogleController {
         ObjectMapper mapper = new ObjectMapper();
         Map result = mapper.readValue(body, Map.class);
 
-        Iterator resultIterator = result.keySet().iterator();
-        while (resultIterator.hasNext()) {
-            Object key = resultIterator.next();
+        for (Object key : result.keySet()) {
             log.info(key + " : " + result.get(key));
         }
 

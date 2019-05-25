@@ -20,6 +20,20 @@ public class MemberDTO {
     private String subId;
     private String createTime;
 
+    private MemberDTO(){}
+    private MemberDTO(String id, String email, String pw, String nick, String loginType, String pictureUrl,
+                      String locale, String subId, String createTime){
+        this.id = id;
+        this.email = email;
+        this.pw = pw;
+        this.nick = nick;
+        this.loginType = loginType;
+        this.pictureUrl = pictureUrl;
+        this.locale = locale;
+        this.subId = subId;
+        this.createTime = createTime;
+    }
+
     public static class Builder {
         // Required parameters(필수 인자)
         private final String id;
