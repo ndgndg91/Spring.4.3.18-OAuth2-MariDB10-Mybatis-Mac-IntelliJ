@@ -17,6 +17,16 @@
          WHERE id = #{id}
     </select>
 
+    <select id="selectOneMemberByEmail" parameterType="java.lang.String" resultType="Member">
+        SELECT id
+               ,email
+               ,pw
+               ,nick
+               ,login_type
+          FROM member
+         WHERE email = #{email}
+    </select>
+
     <insert id="insertMemberAllParameters" parameterType="Member">
         INSERT INTO member VALUES (#{id}, #{email}, #{pw}, #{nick}, #{loginType}, #{pictureUrl}, #{locale}, #{subId})
     </insert>

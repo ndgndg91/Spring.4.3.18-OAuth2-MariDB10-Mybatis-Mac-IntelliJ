@@ -19,6 +19,10 @@ public class MemberDao {
         return sqlSession.selectOne("member.isExistMember", id);
     }
 
+    public MemberDTO selectOneMemberByEmail(String email){
+        return sqlSession.selectOne("member.selectOneMemberByEmail", email);
+    }
+
     public void insertMemberAllParameters(MemberDTO memberDTO) {
         sqlSession.insert("member.insertMemberAllParameters", memberDTO);
     }

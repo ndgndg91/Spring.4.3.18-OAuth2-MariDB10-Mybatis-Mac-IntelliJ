@@ -19,6 +19,10 @@ public class MemberService {
         return memberDao.selectOneMemberById(id);
     }
 
+    public MemberDTO selectOneMeberByEmail(String email){
+        return memberDao.selectOneMemberByEmail(email);
+    }
+
     public void insertMemberAllParameters(MemberDTO memberDTO) {
         memberDao.insertMemberAllParameters(memberDTO);
     }

@@ -96,10 +96,9 @@ public class GoogleController {
             log.info(key + " : " + result.get(key));
         }
 
-        Optional<MemberDTO> optionalMember = Optional.ofNullable(memberService.selectOneMemberById(String.valueOf(result.get("at_hash"))));
+        Optional<MemberDTO> optionalMember = Optional.ofNullable(memberService.selectOneMeberByEmail(String.valueOf(result.get("email"))));
         if (!optionalMember.isPresent())
             memberService.insertMemberExcludePwParameter(new MemberDTO.Builder((String)result.get("at_hash"), (String)result.get("email"))
-                    .pw((String)result.get("at_hash"))
                     .nick((String)result.get("name"))
                     .loginType(LoginType.GOOGLE.toString())
                     .pictureUrl((String)result.get("picture"))
@@ -123,6 +122,7 @@ public class GoogleController {
         session.removeAttribute("googleAccessToken");
         session.removeAttribute("googleEmail");
         session.removeAttribute("googleName");
+        session.invalidate();
         return "redirect:/";
     }
 }
