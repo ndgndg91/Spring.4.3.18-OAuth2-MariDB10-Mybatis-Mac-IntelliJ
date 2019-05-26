@@ -11,6 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+
 
 @Log4j
 @Controller
@@ -26,15 +29,17 @@ public class MemberController {
     private OAuth2Parameters googleOAuth2Parameters;
 
     @RequestMapping("/login")
-    public String enterLogin(Model model){
+    public String enterLogin(Model model, HttpSession session) throws UnsupportedEncodingException {
         //URL을 생성한다.
         OAuth2Operations oauthOperations = googleConnectionFactory.getOAuthOperations();
         String url = oauthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, googleOAuth2Parameters);
 
         log.info("/googleLogin, url : " + url);
         log.info("/kakaoLogin, url : " + KaKaoController.K_URL);
+        log.info("/naverLogin, url : " + NaverController.getNaverLoginUrl(session));
         model.addAttribute("google_url", url);
         model.addAttribute("kakao_url", KaKaoController.K_URL);
+        model.addAttribute("naver_url", NaverController.getNaverLoginUrl(session));
         log.info(memberService.selectNow());
         return "/member/login";
     }

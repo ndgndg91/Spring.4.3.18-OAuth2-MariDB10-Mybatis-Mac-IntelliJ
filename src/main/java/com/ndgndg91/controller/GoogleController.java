@@ -26,7 +26,6 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
 
@@ -46,9 +45,7 @@ public class GoogleController {
     @RequestMapping(value = "/auth/google/callback")
     public String doSessionAssignActionPage(HttpServletRequest request, @RequestParam Map<String, Object> paramMap,
                                             HttpSession session) throws Exception {
-        Iterator<String> paramIterator = paramMap.keySet().iterator();
-        while (paramIterator.hasNext()) {
-            String key = paramIterator.next();
+        for (String key : paramMap.keySet()) {
             log.info(key + " : " + paramMap.get(key));
         }
         String code = request.getParameter("code");

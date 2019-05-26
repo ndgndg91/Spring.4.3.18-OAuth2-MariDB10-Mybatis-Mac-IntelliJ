@@ -20,7 +20,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -74,8 +73,6 @@ public class KaKaoController {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            // clear resources
         }
         return returnNode.get("access_token").toString();
     }
@@ -126,7 +123,7 @@ public class KaKaoController {
 
 
     @RequestMapping(value = "/auth/kakao/redirect")
-    public String getKakaoSignIn(ModelMap model, @RequestParam("code") String code, HttpSession session) {
+    public String getKakaoSignIn(@RequestParam("code") String code, HttpSession session) {
 
         JsonNode userInfo = getKakaoUserInfo(code, session);
         session.setAttribute("kakaoUserInfo", userInfo);
