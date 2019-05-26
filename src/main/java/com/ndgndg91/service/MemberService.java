@@ -11,10 +11,6 @@ public class MemberService {
     @Autowired
     private MemberDao memberDao;
 
-    public String selectNow(){
-        return memberDao.selectNow();
-    }
-
     public MemberDTO selectOneMemberById(String id){
         return memberDao.selectOneMemberById(id);
     }

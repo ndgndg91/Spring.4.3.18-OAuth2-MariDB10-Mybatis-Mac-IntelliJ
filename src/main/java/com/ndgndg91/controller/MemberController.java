@@ -40,7 +40,6 @@ public class MemberController {
         model.addAttribute("google_url", url);
         model.addAttribute("kakao_url", KaKaoController.K_URL);
         model.addAttribute("naver_url", NaverController.getNaverLoginUrl(session));
-        log.info(memberService.selectNow());
         return "/member/login";
     }
 }

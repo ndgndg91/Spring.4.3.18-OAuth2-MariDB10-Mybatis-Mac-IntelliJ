@@ -3,10 +3,6 @@
 
 <mapper namespace="member">
 
-    <select id="selectNow" resultType="java.lang.String">
-        SELECT now()
-    </select>
-
     <select id="isExistMember" parameterType="java.lang.String" resultType="Member">
         SELECT id
                ,email

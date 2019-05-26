@@ -11,10 +11,6 @@ public class MemberDao {
     @Autowired
     private SqlSession sqlSession;
 
-    public String selectNow(){
-        return sqlSession.selectOne("member.selectNow");
-    }
-
     public MemberDTO selectOneMemberById(String id){
         return sqlSession.selectOne("member.isExistMember", id);
     }
