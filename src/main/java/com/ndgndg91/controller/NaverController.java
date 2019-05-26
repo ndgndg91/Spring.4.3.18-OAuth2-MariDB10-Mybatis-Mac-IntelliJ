@@ -28,7 +28,7 @@ import static com.ndgndg91.model.enums.LoginType.NAVER;
 public class NaverController {
     private static final String CLIENT_ID = "aKzz8HPYVueuyowOPc55";
     private static final String CLIENT_SECRET = "gmThUARPjr";
-    private static final String N_REDIRECT_URL = "http://localhost:8080/auth/naver/callback";
+    private static final String N_REDIRECT_URL = "http://localhost:8080/auth/naver/redirect";
     private static final String N_ACCESS_TOKEN_URL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&redirect_uri=" + N_REDIRECT_URL;
     private final static String PROFILE_API_URL = "https://openapi.naver.com/v1/nid/me";
 
