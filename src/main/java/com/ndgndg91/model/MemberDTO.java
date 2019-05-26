@@ -14,24 +14,33 @@ public class MemberDTO {
     private String email;
     private String pw;
     private String nick;
+    private String realName;
     private String loginType;
     private String pictureUrl;
     private String thumbnailImageUrl;
     private String locale;
+    private String gender;
+    private String age;
+    private String birth;
     private String subId;
     private String createTime;
 
     private MemberDTO(){}
-    private MemberDTO(String id, String email, String pw, String nick, String loginType, String pictureUrl,
-                      String thumbnailImageUrl, String locale, String subId, String createTime){
+    private MemberDTO(String id, String email, String pw, String nick, String realName, String loginType,
+                      String pictureUrl, String thumbnailImageUrl, String locale, String subId,
+                      String gender, String age, String birth, String createTime ){
         this.id = id;
         this.email = email;
         this.pw = pw;
         this.nick = nick;
+        this.realName = realName;
         this.loginType = loginType;
         this.pictureUrl = pictureUrl;
         this.thumbnailImageUrl = thumbnailImageUrl;
         this.locale = locale;
+        this.gender = gender;
+        this.age = age;
+        this.birth = birth;
         this.subId = subId;
         this.createTime = createTime;
     }
@@ -44,10 +53,14 @@ public class MemberDTO {
         // Optional parameters - initialized to default values(선택적 인자는 기본값으로 초기화)
         private String pw = "";
         private String nick = "";
+        private String realName = "";
         private String loginType = LoginType.DEFAULT.toString();
         private String pictureUrl = "";
         private String thumbnailImageUrl = "";
         private String locale = "ko";
+        private String gender = "";
+        private String age = "";
+        private String birth = "";
         private String subId = "";
 
         public Builder(String id, String email) {
@@ -62,6 +75,11 @@ public class MemberDTO {
 
         public Builder nick(String nick) {
             this.nick = nick;
+            return this;
+        }
+
+        public Builder realName(String realName) {
+            this.realName = realName;
             return this;
         }
 
@@ -85,6 +103,21 @@ public class MemberDTO {
             return this;
         }
 
+        public Builder age(String age){
+            this.age = age;
+            return this;
+        }
+
+        public Builder gender(String gender){
+            this.gender = gender;
+            return this;
+        }
+
+        public Builder birth(String birth){
+            this.birth = birth;
+            return this;
+        }
+
         public Builder subId(String subId){
             this.subId = subId;
             return this;
@@ -104,6 +137,9 @@ public class MemberDTO {
         this.pictureUrl = builder.pictureUrl;
         this.thumbnailImageUrl = builder.thumbnailImageUrl;
         this.locale = builder.locale;
+        this.gender = builder.gender;
+        this.age = builder.age;
+        this.birth = builder.birth;
         this.subId = builder.subId;
     }
 }

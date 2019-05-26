@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.ndgndg91.model.ButtonVO;
 import com.ndgndg91.model.MemberDTO;
-import com.ndgndg91.model.enums.LoginType;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
 import org.apache.http.HttpResponse;
@@ -32,6 +31,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+
+import static com.ndgndg91.model.enums.LoginType.KAKAO;
 
 @Log4j
 @Controller
@@ -118,7 +119,7 @@ public class KaKaoController {
         String profileImageUrl = properties.get("profile_image").getAsString();
         String nickName = properties.get("nickname").getAsString();
         String thumbnailImageUrl = properties.get("thumbnail_image").getAsString();
-        return new MemberDTO.Builder(id, emailVerified ? email : LoginType.KAKAO.toString()).nick(nickName).pictureUrl(profileImageUrl).thumbnailImageUrl(thumbnailImageUrl).loginType(LoginType.KAKAO.toString()).build();
+        return new MemberDTO.Builder(id, emailVerified ? email : KAKAO.toString()).nick(nickName).pictureUrl(profileImageUrl).thumbnailImageUrl(thumbnailImageUrl).loginType(KAKAO.toString()).build();
     }
 
 

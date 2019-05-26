@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,8 @@ import java.net.*;
 import java.security.SecureRandom;
 import java.util.Optional;
 
+import static com.ndgndg91.model.enums.LoginType.NAVER;
+
 @Log4j
 @Controller
 public class NaverController {
@@ -32,8 +35,15 @@ public class NaverController {
     @Autowired
     private MemberService memberService;
 
+    @RequestMapping(value = "/auth/naver/logout")
+    public String naverLogout(HttpSession session){
+        session.removeAttribute("NaverUserInfo");
+        session.invalidate();
+        return "redirect:/";
+    }
+
     @RequestMapping(value = "/auth/naver/callback")
-    public String getNaverSignIn(HttpServletRequest request) {
+    public String getNaverSignIn(HttpServletRequest request, Model model) {
         String code = request.getParameter("code");
         String state = request.getParameter("state");
         StringBuilder apiURL = new StringBuilder()
@@ -43,12 +53,12 @@ public class NaverController {
         try {
             HttpURLConnection con = getNaverAccessTokenHttpUrlConnection(apiURL.toString());
             int responseCode = con.getResponseCode();
-            BufferedReader br = getBuffredReader(responseCode, con);
+            BufferedReader br = getBufferedReader(responseCode, con);
             StringBuilder res = getResponseToStringBuilder(br);
             br.close();
             if (responseCode == 200) {
                 log.info(res.toString());
-                parseAccessToken(res.toString());
+                parseAccessToken(res.toString(), request.getSession(), model);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,7 +66,7 @@ public class NaverController {
         return "redirect:/";
     }
 
-    private void parseAccessToken(String response){
+    private void parseAccessToken(String response, HttpSession session, Model model){
         String access_token = JsonUtils.parse1Depth(response, "access_token");
         String refresh_token = JsonUtils.parse1Depth(response, "refresh_token");
         String token_type = JsonUtils.parse1Depth(response, "token_type");
@@ -66,21 +76,26 @@ public class NaverController {
         try {
             HttpURLConnection con = getNaverUserInfoHttpURLConnection(access_token);
             int responseCode = con.getResponseCode();
-            BufferedReader br = getBuffredReader(responseCode, con);
+            BufferedReader br = getBufferedReader(responseCode, con);
             StringBuilder res = getResponseToStringBuilder(br);
             log.info(res.toString());
-            parseNaverUserInfo(res.toString());
+            parseNaverUserInfo(res.toString(), session, model);
             br.close();
         } catch (IOException e){
             e.printStackTrace();
         }
     }
 
-    private void parseNaverUserInfo(String naverUserInfo){
+    private void parseNaverUserInfo(String naverUserInfo, HttpSession session, Model model){
         String resultCode = JsonUtils.parse1Depth(naverUserInfo, "resultcode");
         if (StringUtils.equals(resultCode, "00")) {
             String id = JsonUtils.parse2Depth(naverUserInfo, "response", "id");
-            String message = JsonUtils.parse1Depth(naverUserInfo, "message");
+            Optional<MemberDTO> isExistMember = Optional.ofNullable(memberService.selectOneMemberById(id));
+            if (isExistMember.isPresent()){
+                setMemberToSession(isExistMember.get(), session);
+                return;
+            }
+
             String enc_id = JsonUtils.parse2Depth(naverUserInfo, "response", "enc_id");
             String profile_image = JsonUtils.parse2Depth(naverUserInfo, "response", "profile_image");
             String age = JsonUtils.parse2Depth(naverUserInfo, "response", "age");
@@ -89,14 +104,27 @@ public class NaverController {
             String email = JsonUtils.parse2Depth(naverUserInfo, "response", "email");
             String name = JsonUtils.parse2Depth(naverUserInfo, "response", "name");
             String birthday = JsonUtils.parse2Depth(naverUserInfo, "response", "birthday");
-
+            MemberDTO newMember = new MemberDTO.Builder(id, email)
+                    .loginType(NAVER.toString())
+                    .subId(enc_id)
+                    .pictureUrl(profile_image)
+                    .age(age)
+                    .gender(gender)
+                    .nick(nickname)
+                    .realName(name)
+                    .birth(birthday)
+                    .build();
+            memberService.insertMemberExcludePwParameter(newMember);
+            setMemberToSession(newMember, session);
+            return;
         }
 
+        String message = JsonUtils.parse1Depth(naverUserInfo, "message");
+        model.addAttribute("errMessage", message);
     }
 
-    private boolean ifExistMemberSetSession(String id){
-        Optional<MemberDTO> isExistMember = Optional.ofNullable(memberService.selectOneMemberById(id));
-        return isExistMember.isPresent();
+    private void setMemberToSession(MemberDTO loginMember, HttpSession session){
+        session.setAttribute("NaverUserInfo", loginMember);
     }
 
     private HttpURLConnection getNaverAccessTokenHttpUrlConnection(String apiURL) throws IOException {
@@ -114,7 +142,7 @@ public class NaverController {
         return con;
     }
 
-    private BufferedReader getBuffredReader(int responseCode, HttpURLConnection con) throws IOException {
+    private BufferedReader getBufferedReader(int responseCode, HttpURLConnection con) throws IOException {
         if (responseCode != 200){
             return new BufferedReader(new InputStreamReader(con.getErrorStream()));
         }

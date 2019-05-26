@@ -13,6 +13,10 @@ public enum LoginType {
             return "KAKAO";
         }
     },
+    NAVER{
+        @Override
+        public String toString() { return "NAVER";}
+    },
     DEFAULT{
         @Override
         public String toString() {

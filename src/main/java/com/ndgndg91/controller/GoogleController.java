@@ -3,7 +3,6 @@ package com.ndgndg91.controller;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ndgndg91.auth.AuthInfo;
 import com.ndgndg91.model.MemberDTO;
-import com.ndgndg91.model.enums.LoginType;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
 import org.apache.http.HttpResponse;
@@ -28,6 +27,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Map;
 import java.util.Optional;
+
+import static com.ndgndg91.model.enums.LoginType.GOOGLE;
 
 @Log4j
 @Controller
@@ -97,7 +98,7 @@ public class GoogleController {
         if (!optionalMember.isPresent())
             memberService.insertMemberExcludePwParameter(new MemberDTO.Builder((String)result.get("at_hash"), (String)result.get("email"))
                     .nick((String)result.get("name"))
-                    .loginType(LoginType.GOOGLE.toString())
+                    .loginType(GOOGLE.toString())
                     .pictureUrl((String)result.get("picture"))
                     .locale((String)result.get("locale"))
                     .build());
