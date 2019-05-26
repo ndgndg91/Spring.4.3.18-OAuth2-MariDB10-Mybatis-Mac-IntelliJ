@@ -8,8 +8,8 @@
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url"
                   value="jdbc:mysql://localhost:3307/test?useSSL=false&amp;serverTimezone=Asia/Seoul"/>
-        <property name="username" value=""/>
-        <property name="password" value=""/>
+        <property name="username" value="test"/>
+        <property name="password" value="test"/>
     </bean>
 
     <!-- sessionFactory -->
@@ -43,6 +43,20 @@
         <constructor-arg
                 value=""/>
         <constructor-arg value=""/>
+    </bean>
+
+
+    <!--Facebook 소셜 로그인 연결 설정-->
+    <bean id="facebookConnectionFactory"
+          class="org.springframework.social.facebook.connect.FacebookConnectionFactory">
+        <constructor-arg value="" />
+        <constructor-arg value="" />
+    </bean>
+
+    <bean id="facebookOAuth2Parameters"
+          class="org.springframework.social.oauth2.OAuth2Parameters">
+        <property name="scope" value="email" />
+        <property name="redirectUri" value="https://localhost:8080/auth/facebook/redirect" />
     </bean>
 
     <bean id="freeMarkerConfigurationFactory" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">

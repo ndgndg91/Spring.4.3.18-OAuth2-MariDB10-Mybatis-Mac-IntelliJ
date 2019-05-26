@@ -3,6 +3,8 @@ package com.ndgndg91.controller;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.google.connect.GoogleConnectionFactory;
 import org.springframework.social.oauth2.GrantType;
 import org.springframework.social.oauth2.OAuth2Operations;
@@ -28,16 +30,28 @@ public class MemberController {
     @Autowired
     private OAuth2Parameters googleOAuth2Parameters;
 
+    @Autowired
+    private FacebookConnectionFactory facebookConnectionFactory;
+
+    @Autowired
+    @Qualifier("facebookOAuth2Parameters")
+    private OAuth2Parameters facebookOAuth2Parameters;
+
     @RequestMapping("/login")
     public String enterLogin(Model model, HttpSession session) throws UnsupportedEncodingException {
         //URL을 생성한다.
-        OAuth2Operations oauthOperations = googleConnectionFactory.getOAuthOperations();
-        String url = oauthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, googleOAuth2Parameters);
+        OAuth2Operations googleOAuthOperations = googleConnectionFactory.getOAuthOperations();
+        String googleLoginUrl = googleOAuthOperations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, googleOAuth2Parameters);
 
-        log.info("/googleLogin, url : " + url);
+        OAuth2Operations facebookOAuth2Operations = facebookConnectionFactory.getOAuthOperations();
+        String facebookLoginUrl = facebookOAuth2Operations.buildAuthorizeUrl(GrantType.AUTHORIZATION_CODE, facebookOAuth2Parameters);
+
+        log.info("/facebookLogin url : " + facebookLoginUrl);
+        log.info("/googleLogin, url : " + googleLoginUrl);
         log.info("/kakaoLogin, url : " + KaKaoController.K_URL);
         log.info("/naverLogin, url : " + NaverController.getNaverLoginUrl(session));
-        model.addAttribute("google_url", url);
+        model.addAttribute("facebook_url", facebookLoginUrl);
+        model.addAttribute("google_url", googleLoginUrl);
         model.addAttribute("kakao_url", KaKaoController.K_URL);
         model.addAttribute("naver_url", NaverController.getNaverLoginUrl(session));
         return "/member/login";

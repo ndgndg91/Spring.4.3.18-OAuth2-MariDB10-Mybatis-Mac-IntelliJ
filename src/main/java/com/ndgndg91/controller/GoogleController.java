@@ -10,6 +10,7 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Controller;
@@ -41,6 +42,7 @@ public class GoogleController {
     private AuthInfo authInfo;
 
     @Autowired
+    @Qualifier("googleOAuth2Parameters")
     private OAuth2Parameters googleOAuth2Parameters;
 
     @RequestMapping(value = "/auth/google/callback")

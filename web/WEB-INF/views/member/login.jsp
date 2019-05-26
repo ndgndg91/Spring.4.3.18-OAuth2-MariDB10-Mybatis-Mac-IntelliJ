@@ -65,11 +65,13 @@
             </div>
 
             <div class="flex-c p-b-112">
-                <a href="${kakao_url}" class="login100-social-item">
+                    <%-- 페이스북은 redirect는 무조건 https 프로토콜만 지원하고 있음.   --%>
+<%--                <a href="${facebook_url}}" class="login100-social-item">--%>
 <%--                    <i class="fa fa-facebook-f"></i>--%>
+<%--                </a>--%>
+                <a href="${kakao_url}" class="login100-social-item">
                     <img src="/static/images/icons/kakaolink_btn_medium/kakaolink_btn_medium.png" alt="KAKAO"/>
                 </a>
-
                 <a href="${google_url}" class="login100-social-item">
                     <img src="/static/images/icons/icon-google.png" alt="GOOGLE"/>
                 </a>
