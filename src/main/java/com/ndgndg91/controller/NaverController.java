@@ -42,7 +42,7 @@ public class NaverController {
         return "redirect:/";
     }
 
-    @RequestMapping(value = "/auth/naver/callback")
+    @RequestMapping(value = "/auth/naver/redirect")
     public String getNaverSignIn(HttpServletRequest request, Model model) {
         String code = request.getParameter("code");
         String state = request.getParameter("state");
