@@ -16,19 +16,21 @@ public class MemberDTO {
     private String nick;
     private String loginType;
     private String pictureUrl;
+    private String thumbnailImageUrl;
     private String locale;
     private String subId;
     private String createTime;
 
     private MemberDTO(){}
     private MemberDTO(String id, String email, String pw, String nick, String loginType, String pictureUrl,
-                      String locale, String subId, String createTime){
+                      String thumbnailImageUrl, String locale, String subId, String createTime){
         this.id = id;
         this.email = email;
         this.pw = pw;
         this.nick = nick;
         this.loginType = loginType;
         this.pictureUrl = pictureUrl;
+        this.thumbnailImageUrl = thumbnailImageUrl;
         this.locale = locale;
         this.subId = subId;
         this.createTime = createTime;
@@ -44,6 +46,7 @@ public class MemberDTO {
         private String nick = "";
         private String loginType = LoginType.DEFAULT.toString();
         private String pictureUrl = "";
+        private String thumbnailImageUrl = "";
         private String locale = "ko";
         private String subId = "";
 
@@ -72,6 +75,11 @@ public class MemberDTO {
             return this;
         }
 
+        public Builder thumbnailImageUrl(String thumbnailImageUrl){
+            this.thumbnailImageUrl = thumbnailImageUrl;
+            return this;
+        }
+
         public Builder locale(String locale){
             this.locale = locale;
             return this;
@@ -94,6 +102,7 @@ public class MemberDTO {
         this.nick = builder.nick;
         this.loginType = builder.loginType;
         this.pictureUrl = builder.pictureUrl;
+        this.thumbnailImageUrl = builder.thumbnailImageUrl;
         this.locale = builder.locale;
         this.subId = builder.subId;
     }

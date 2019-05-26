@@ -28,11 +28,11 @@
     </select>
 
     <insert id="insertMemberAllParameters" parameterType="Member">
-        INSERT INTO member VALUES (#{id}, #{email}, #{pw}, #{nick}, #{loginType}, #{pictureUrl}, #{locale}, #{subId})
+        INSERT INTO member VALUES (#{id}, #{email}, #{pw}, #{nick}, #{loginType}, #{pictureUrl}, #{thumbnailImageUrl}, #{locale}, #{subId})
     </insert>
 
     <insert id="insertMemberExcludePwParameter" parameterType="Member">
-        INSERT INTO member(id, email, nick, login_type, picture_url, locale, sub_id) VALUES (#{id}, #{email}, #{nick}, #{loginType}, #{pictureUrl}, #{locale}, #{subId})
+        INSERT INTO member(id, email, nick, login_type, picture_url, thumbnail_image_url, locale, sub_id) VALUES (#{id}, #{email}, #{nick}, #{loginType}, #{pictureUrl}, #{thumbnailImageUrl}, #{locale}, #{subId})
     </insert>
 
 </mapper>

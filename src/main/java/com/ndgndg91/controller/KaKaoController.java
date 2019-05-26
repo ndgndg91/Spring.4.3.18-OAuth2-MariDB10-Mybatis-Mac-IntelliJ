@@ -41,7 +41,7 @@ public class KaKaoController {
     private final static String K_REDIRECT_URI = "http://localhost:8080/auth/kakao/redirect";
     public final static String K_URL = "https://kauth.kakao.com/oauth/authorize?"
             + "client_id=" + K_CLIENT_ID + "&redirect_uri="
-            + K_REDIRECT_URI + "&response_type=code";
+            + K_REDIRECT_URI + "&response_type=code&scope=account_email,gender,age_range,birthday";
 
     @Autowired
     private MemberService memberService;
@@ -107,13 +107,54 @@ public class KaKaoController {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-            // clear resources
         }
         return returnNode;
     }
 
-    public JsonNode kakaoLogout(String authorize_code) {
+    private MemberDTO parseKakaoJson(JsonNode userInfo) {
+        JsonParser kakaoParser = new JsonParser();
+        JsonElement outer = kakaoParser.parse(userInfo.toString());
+        String id = outer.getAsJsonObject().get("id").getAsString();
+        String email = outer.getAsJsonObject().get("kaccount_email").getAsString();
+        Boolean emailVerified = Boolean.valueOf(outer.getAsJsonObject().get("kaccount_email_verified").getAsString());
+        JsonObject properties = outer.getAsJsonObject().get("properties").getAsJsonObject();
+        String profileImageUrl = properties.get("profile_image").getAsString();
+        String nickName = properties.get("nickname").getAsString();
+        String thumbnailImageUrl = properties.get("thumbnail_image").getAsString();
+        return new MemberDTO.Builder(id, emailVerified ? email : LoginType.KAKAO.toString()).nick(nickName).pictureUrl(profileImageUrl).thumbnailImageUrl(thumbnailImageUrl).loginType(LoginType.KAKAO.toString()).build();
+    }
+
+
+    @RequestMapping(value = "/auth/kakao/redirect")
+    public String getKakaoSignIn(ModelMap model, @RequestParam("code") String code, HttpSession session) {
+
+        JsonNode userInfo = getKakaoUserInfo(code, session);
+        session.setAttribute("kakaoUserInfo", userInfo);
+        MemberDTO kakaoUserInfo = parseKakaoJson(userInfo);
+        Optional<MemberDTO> optionalMember = Optional.ofNullable(memberService.selectOneMemberById(kakaoUserInfo.getId()));
+        if (!optionalMember.isPresent())
+            memberService.insertMemberExcludePwParameter(kakaoUserInfo);
+        Iterator iterator = userInfo.iterator();
+        printIterator(iterator);
+        return "redirect:/";
+    }
+
+
+    @RequestMapping(value = "/auth/kakao/logout")
+    public String kakaoLogout(HttpSession session) {
+        log.info("kakao Logout");
+        String KaKaoAccessToken = (String) session.getAttribute("KaKaoAccessToken");
+        session.removeAttribute("KaKaoAccessToken");
+        session.removeAttribute("kakaoUserInfo");
+        session.invalidate();
+        log.info("accessToken : " + KaKaoAccessToken);
+        JsonNode afterLogout = kakaoLogout(KaKaoAccessToken);
+        Iterator iterator = afterLogout.iterator();
+        printIterator(iterator);
+        return "redirect:/";
+    }
+
+    private JsonNode kakaoLogout(String authorize_code) {
         final String RequestUrl = "https://kapi.kakao.com/v1/user/logout";
         final HttpClient client = HttpClientBuilder.create().build();
         final HttpPost post = new HttpPost(RequestUrl);
@@ -134,55 +175,8 @@ public class KaKaoController {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally {
-
         }
-
         return returnNode;
-    }
-
-    private MemberDTO parseKakaoJson(JsonNode userInfo) {
-        JsonParser kakaoParser = new JsonParser();
-        JsonElement outer = kakaoParser.parse(userInfo.toString());
-        String id = outer.getAsJsonObject().get("id").getAsString();
-        log.info("kakao Parse : " + id);
-        JsonObject properties = outer.getAsJsonObject().get("properties").getAsJsonObject();
-        String profileImageUrl = properties.get("profile_image").getAsString();
-        String nickName = properties.get("nickname").getAsString();
-        String thumbnailImageUrl = properties.get("thumbnail_image").getAsString();
-        log.info("profileImageUrl : " + profileImageUrl);
-        log.info("nickName : " + nickName);
-        log.info("thumbnailImageUrl : " + thumbnailImageUrl);
-        return new MemberDTO.Builder(id, LoginType.KAKAO.toString()).nick(nickName).pictureUrl(profileImageUrl).loginType(LoginType.KAKAO.toString()).build();
-    }
-
-
-    @RequestMapping(value = "/auth/kakao/redirect")
-    public String getKakaoSignIn(ModelMap model, @RequestParam("code") String code, HttpSession session) throws Exception {
-
-        JsonNode userInfo = getKakaoUserInfo(code, session);
-        session.setAttribute("kakaoUserInfo", userInfo);
-        MemberDTO kakaoUserInfo = parseKakaoJson(userInfo);
-        Optional<MemberDTO> optionalMember = Optional.ofNullable(memberService.selectOneMemberById(kakaoUserInfo.getId()));
-        if (!optionalMember.isPresent())
-            memberService.insertMemberExcludePwParameter(kakaoUserInfo);
-        Iterator iterator = userInfo.iterator();
-        printIterator(iterator);
-        return "redirect:/";
-    }
-
-
-    @RequestMapping(value = "/auth/kakao/logout")
-    public String kakaoLogout(HttpSession session) {
-        log.info("kakao Logout");
-        String KaKaoAccessToken = (String) session.getAttribute("KaKaoAccessToken");
-        session.removeAttribute("KaKaoAccessToken");
-        session.removeAttribute("kakaoUserInfo");
-        log.info("accessToken : " + KaKaoAccessToken);
-        JsonNode afterLogout = kakaoLogout(KaKaoAccessToken);
-        Iterator iterator = afterLogout.iterator();
-        printIterator(iterator);
-        return "redirect:/";
     }
 
     private void printIterator(Iterator iterator) {
