@@ -28,6 +28,7 @@ public class MemberController {
     private GoogleConnectionFactory googleConnectionFactory;
 
     @Autowired
+    @Qualifier("googleOAuth2Parameters")
     private OAuth2Parameters googleOAuth2Parameters;
 
     @Autowired

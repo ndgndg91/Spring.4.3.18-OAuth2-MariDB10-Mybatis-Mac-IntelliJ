@@ -8,8 +8,8 @@
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url"
                   value="jdbc:mysql://localhost:3307/test?useSSL=false&amp;serverTimezone=Asia/Seoul"/>
-        <property name="username" value="test"/>
-        <property name="password" value="test"/>
+        <property name="username" value=""/>
+        <property name="password" value=""/>
     </bean>
 
     <!-- sessionFactory -->
@@ -33,6 +33,7 @@
 
     <bean id="googleOAuth2Parameters"
           class="org.springframework.social.oauth2.OAuth2Parameters">
+        <qualifier value="googleOAuth2Parameters"/>
         <property name="scope"
                   value="email profile"/>
         <property name="redirectUri"
@@ -55,6 +56,7 @@
 
     <bean id="facebookOAuth2Parameters"
           class="org.springframework.social.oauth2.OAuth2Parameters">
+        <qualifier value="facebookOAuth2Parameters"/>
         <property name="scope" value="email" />
         <property name="redirectUri" value="https://localhost:8080/auth/facebook/redirect" />
     </bean>

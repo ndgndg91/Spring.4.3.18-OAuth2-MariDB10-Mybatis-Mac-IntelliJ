@@ -43,7 +43,7 @@ public class NaverController {
     }
 
     @RequestMapping(value = "/auth/naver/redirect")
-    public String getNaverSignIn(HttpServletRequest request, Model model) {
+    public String getNaverSignIn(HttpServletRequest request, HttpSession session, Model model) {
         String code = request.getParameter("code");
         String state = request.getParameter("state");
         StringBuilder apiURL = new StringBuilder()
@@ -58,7 +58,7 @@ public class NaverController {
             br.close();
             if (responseCode == 200) {
                 log.info(res.toString());
-                parseAccessToken(res.toString(), request.getSession(), model);
+                parseAccessToken(res.toString(), session, model);
             }
         } catch (IOException e) {
             e.printStackTrace();

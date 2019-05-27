@@ -30,7 +30,10 @@
   </c:if>
 
   <c:if test="${not empty sessionScope.NaverUserInfo}">
-    ${sessionScope.NaverUserInfo} 님 방가방가<br/>
+    ${sessionScope.NaverUserInfo.nick} 님 방가방가<br/>
+    ${sessionScope.NaverUserInfo.email}<br/>
+    ${sessionScope.NaverUserInfo.id}<br/>
+    ${sessionScope.NaverUserInfo}
     <a href="/auth/naver/logout">로그아웃</a><br/>
   </c:if>
   <button onclick="location.href='/mail/test'">메일 테스트</button>
