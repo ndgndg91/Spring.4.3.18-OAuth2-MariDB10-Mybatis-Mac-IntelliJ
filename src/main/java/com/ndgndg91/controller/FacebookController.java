@@ -1,5 +1,6 @@
 package com.ndgndg91.controller;
 
+import com.ndgndg91.controller.LoginInterface.Login;
 import lombok.extern.log4j.Log4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @Log4j
 @Controller
-public class FacebookController {
+public class FacebookController implements Login {
 
     @Autowired
     @Qualifier("facebookOAuth2Parameters")

@@ -1,6 +1,7 @@
 package com.ndgndg91.controller;
 
 import com.ndgndg91.common.JsonUtils;
+import com.ndgndg91.controller.LoginInterface.Login;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
@@ -25,7 +26,7 @@ import static com.ndgndg91.model.enums.LoginType.NAVER;
 
 @Log4j
 @Controller
-public class NaverController {
+public class NaverController implements Login {
     private static final String CLIENT_ID = "aKzz8HPYVueuyowOPc55";
     private static final String CLIENT_SECRET = "gmThUARPjr";
     private static final String N_REDIRECT_URL = "http://localhost:8080/auth/naver/redirect";
@@ -121,11 +122,6 @@ public class NaverController {
 
         String message = JsonUtils.parse1Depth(naverUserInfo, "message");
         model.addAttribute("errMessage", message);
-    }
-
-    private void setMemberToSession(MemberDTO loginMember, HttpSession session){
-        loginMember.makePwBlank();
-        session.setAttribute("loginUserInfo", loginMember);
     }
 
     private HttpURLConnection getNaverAccessTokenHttpUrlConnection(String apiURL) throws IOException {

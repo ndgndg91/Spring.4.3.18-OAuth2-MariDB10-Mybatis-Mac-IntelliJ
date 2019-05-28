@@ -2,6 +2,7 @@ package com.ndgndg91.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ndgndg91.auth.AuthInfo;
+import com.ndgndg91.controller.LoginInterface.Login;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
@@ -33,7 +34,7 @@ import static com.ndgndg91.model.enums.LoginType.GOOGLE;
 
 @Log4j
 @Controller
-public class GoogleController {
+public class GoogleController implements Login {
 
     @Autowired
     private MemberService memberService;
@@ -111,11 +112,6 @@ public class GoogleController {
 
         setMemberToSession(optionalMember.get(), session);
         return "redirect:/";
-    }
-
-    private void setMemberToSession(MemberDTO loginMember, HttpSession session){
-        loginMember.makePwBlank();
-        session.setAttribute("loginUserInfo", loginMember);
     }
 
     @RequestMapping(value = "/auth/google/logout")

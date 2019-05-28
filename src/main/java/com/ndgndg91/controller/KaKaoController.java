@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.ndgndg91.controller.LoginInterface.Login;
 import com.ndgndg91.model.ButtonVO;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
@@ -36,7 +37,7 @@ import static com.ndgndg91.model.enums.LoginType.KAKAO;
 
 @Log4j
 @Controller
-public class KaKaoController {
+public class KaKaoController implements Login {
     private final static String K_CLIENT_ID = "e604e6d3fe22ec52f468680d8a0018ee";
     private final static String K_REDIRECT_URI = "http://localhost:8080/auth/kakao/redirect";
     public final static String K_URL = "https://kauth.kakao.com/oauth/authorize?"
@@ -179,11 +180,6 @@ public class KaKaoController {
             e.printStackTrace();
         }
         return returnNode;
-    }
-
-    private void setMemberToSession(MemberDTO loginMember, HttpSession session){
-        loginMember.makePwBlank();
-        session.setAttribute("loginUserInfo", loginMember);
     }
 
     private void printIterator(Iterator iterator) {
