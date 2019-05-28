@@ -1,7 +1,9 @@
 package com.ndgndg91.controller;
 
+import com.ndgndg91.model.enums.LoginType;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
@@ -11,10 +13,14 @@ import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+
+import static com.ndgndg91.model.enums.LoginType.*;
 
 
 @Log4j
@@ -56,5 +62,26 @@ public class MemberController {
         model.addAttribute("kakao_url", KaKaoController.K_URL);
         model.addAttribute("naver_url", NaverController.getNaverLoginUrl(session));
         return "/member/login";
+    }
+
+    @GetMapping("/logout")
+    public String logout(@RequestParam("loginType") String loginType, HttpSession session){
+        log.info(loginType);
+        return logoutByType(loginType, session);
+    }
+
+
+    private String logoutByType(String loginType, HttpSession session){
+        if (StringUtils.equals(KAKAO.toString(), loginType))
+            return "forward:/auth/kakao/logout";
+        else if (StringUtils.equals(NAVER.toString(), loginType))
+            return "forward:/auth/naver/logout";
+        else if (StringUtils.equals(GOOGLE.toString(), loginType))
+            return "forward:/auth/google/logout";
+        else {
+            session.removeAttribute("loginUserInfo");
+            session.invalidate();
+            return "redirect:/";
+        }
     }
 }

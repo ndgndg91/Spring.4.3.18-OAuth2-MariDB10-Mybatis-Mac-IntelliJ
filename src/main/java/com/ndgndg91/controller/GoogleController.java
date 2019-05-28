@@ -97,19 +97,25 @@ public class GoogleController {
         }
 
         Optional<MemberDTO> optionalMember = Optional.ofNullable(memberService.selectOneMeberByEmail(String.valueOf(result.get("email"))));
-        if (!optionalMember.isPresent())
-            memberService.insertMemberExcludePwParameter(new MemberDTO.Builder((String)result.get("at_hash"), (String)result.get("email"))
-                    .nick((String)result.get("name"))
+        if (!optionalMember.isPresent()) {
+            MemberDTO newMember = new MemberDTO.Builder((String) result.get("at_hash"), (String) result.get("email"))
+                    .nick((String) result.get("name"))
                     .loginType(GOOGLE.toString())
-                    .pictureUrl((String)result.get("picture"))
-                    .locale((String)result.get("locale"))
-                    .build());
+                    .pictureUrl((String) result.get("picture"))
+                    .locale((String) result.get("locale"))
+                    .build();
+            memberService.insertMemberExcludePwParameter(newMember);
+            setMemberToSession(newMember, session);
+            return "redirect:/";
+        }
 
-        session.setAttribute("googleEmail", result.get("email"));
-        session.setAttribute("googleName", result.get("name"));
-        session.setAttribute("picture", result.get("picture"));
-
+        setMemberToSession(optionalMember.get(), session);
         return "redirect:/";
+    }
+
+    private void setMemberToSession(MemberDTO loginMember, HttpSession session){
+        loginMember.makePwBlank();
+        session.setAttribute("loginUserInfo", loginMember);
     }
 
     @RequestMapping(value = "/auth/google/logout")
@@ -120,8 +126,7 @@ public class GoogleController {
         log.info(response.getStatusLine().getStatusCode());
         log.info(response.getStatusLine().getReasonPhrase());
         session.removeAttribute("googleAccessToken");
-        session.removeAttribute("googleEmail");
-        session.removeAttribute("googleName");
+        session.removeAttribute("loginUserInfo");
         session.invalidate();
         return "redirect:/";
     }

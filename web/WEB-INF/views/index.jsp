@@ -15,29 +15,21 @@
   <body>
   <a href="?lang=en" class="btn btn-sm btn-success">English</a> <a href="?lang=ko" class="btn btn-sm btn-success">한글</a>
   <spring:message code="common.welcome"/>
-  <c:if test="${empty sessionScope.KaKaoAccessToken && empty sessionScope.googleAccessToken && empty sessionScope.NaverUserInfo}"> <!-- sessionScopre.KaKaoAccessToken가 없으면 -->
+  <c:if test="${empty sessionScope.loginUserInfo}"> <!-- sessionScopre.KaKaoAccessToken가 없으면 -->
       <button onclick="location.href='/login';">로그인</button>
 <%--    <button onclick="window.open('/login','로그인', 'scrollbars=yes,resizable=no,top=50%,left=50%,width=400,height=800')">로그인</button>--%>
   </c:if>
-  <c:if test="${not empty sessionScope.kakaoUserInfo }"> <!-- sessionScopre.kakaoUserInfo 있으면 -->
-    ${sessionScope.kakaoUserInfo} 님 방가방가<br/>
-    <a href="/auth/kakao/logout">로그아웃</a><br/>
-  </c:if>
-
-  <c:if test="${not empty sessionScope.googleEmail}">
-    ${sessionScope.googleName} 님 방가방가<br/>
-    <a href="/auth/google/logout">로그아웃</a>
-  </c:if>
-
-  <c:if test="${not empty sessionScope.NaverUserInfo}">
-    ${sessionScope.NaverUserInfo.nick} 님 방가방가<br/>
-    ${sessionScope.NaverUserInfo.email}<br/>
-    ${sessionScope.NaverUserInfo.id}<br/>
-    ${sessionScope.NaverUserInfo}
-    <a href="/auth/naver/logout">로그아웃</a><br/>
+  <c:if test="${not empty sessionScope.loginUserInfo }"> <!-- sessionScopre.kakaoUserInfo 있으면 -->
+    ${sessionScope.loginUserInfo} 님 방가방가<br/>
+    <a href="/logout?loginType=${sessionScope.loginUserInfo.loginType}">로그아웃</a><br/>
   </c:if>
   <button onclick="location.href='/mail/test'">메일 테스트</button>
   <button onclick="location.href='/mail/freemarker'">freemarker 메일 테스트</button>
+  <script>
+      var list = '${exceptMeMemberList}';
+      console.log(list);
+      alert(list);
+  </script>
   </body>
 </html>
 

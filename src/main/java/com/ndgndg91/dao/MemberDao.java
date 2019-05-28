@@ -5,11 +5,15 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public class MemberDao {
 
     @Autowired
     private SqlSession sqlSession;
+
+    public List<Object> selectMemberListExceptMe(String id){ return sqlSession.selectList("member.selectMemberListExceptMe", id);}
 
     public MemberDTO selectOneMemberById(String id){
         return sqlSession.selectOne("member.isExistMember", id);

@@ -127,11 +127,15 @@ public class KaKaoController {
     public String getKakaoSignIn(@RequestParam("code") String code, HttpSession session) {
 
         JsonNode userInfo = getKakaoUserInfo(code, session);
-        session.setAttribute("kakaoUserInfo", userInfo);
         MemberDTO kakaoUserInfo = parseKakaoJson(userInfo);
         Optional<MemberDTO> optionalMember = Optional.ofNullable(memberService.selectOneMemberById(kakaoUserInfo.getId()));
-        if (!optionalMember.isPresent())
+        if (!optionalMember.isPresent()) {
             memberService.insertMemberExcludePwParameter(kakaoUserInfo);
+            setMemberToSession(kakaoUserInfo, session);
+            return "redirect:/";
+        }
+
+        setMemberToSession(optionalMember.get(), session);
         Iterator iterator = userInfo.iterator();
         printIterator(iterator);
         return "redirect:/";
@@ -143,7 +147,7 @@ public class KaKaoController {
         log.info("kakao Logout");
         String KaKaoAccessToken = (String) session.getAttribute("KaKaoAccessToken");
         session.removeAttribute("KaKaoAccessToken");
-        session.removeAttribute("kakaoUserInfo");
+        session.removeAttribute("loginUserInfo");
         session.invalidate();
         log.info("accessToken : " + KaKaoAccessToken);
         JsonNode afterLogout = kakaoLogout(KaKaoAccessToken);
@@ -175,6 +179,11 @@ public class KaKaoController {
             e.printStackTrace();
         }
         return returnNode;
+    }
+
+    private void setMemberToSession(MemberDTO loginMember, HttpSession session){
+        loginMember.makePwBlank();
+        session.setAttribute("loginUserInfo", loginMember);
     }
 
     private void printIterator(Iterator iterator) {

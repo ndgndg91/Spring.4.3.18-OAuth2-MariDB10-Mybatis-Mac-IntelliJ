@@ -5,11 +5,15 @@ import com.ndgndg91.model.MemberDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class MemberService {
 
     @Autowired
     private MemberDao memberDao;
+
+    public List<Object> selectMemberListExceptMe(String id){ return memberDao.selectMemberListExceptMe(id);}
 
     public MemberDTO selectOneMemberById(String id){
         return memberDao.selectOneMemberById(id);

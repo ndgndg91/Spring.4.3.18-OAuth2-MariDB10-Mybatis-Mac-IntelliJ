@@ -8,7 +8,7 @@ import lombok.ToString;
 
 @Getter
 @EqualsAndHashCode(of = {"id"})
-@ToString(of = {"id", "email", "nick", "loginType", "subId"})
+@ToString(of = {"id", "email", "nick", "realName", "pictureUrl", "thumbnailImageUrl", "gender", "age", "birth", "loginType", "subId"})
 public class MemberDTO {
     private String id;
     private String email;
@@ -43,6 +43,10 @@ public class MemberDTO {
         this.birth = birth;
         this.subId = subId;
         this.createTime = createTime;
+    }
+
+    public void makePwBlank() {
+        this.pw = "";
     }
 
     public static class Builder {

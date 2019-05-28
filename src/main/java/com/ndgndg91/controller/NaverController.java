@@ -124,7 +124,8 @@ public class NaverController {
     }
 
     private void setMemberToSession(MemberDTO loginMember, HttpSession session){
-        session.setAttribute("NaverUserInfo", loginMember);
+        loginMember.makePwBlank();
+        session.setAttribute("loginUserInfo", loginMember);
     }
 
     private HttpURLConnection getNaverAccessTokenHttpUrlConnection(String apiURL) throws IOException {

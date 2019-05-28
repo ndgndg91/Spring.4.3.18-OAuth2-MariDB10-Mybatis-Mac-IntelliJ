@@ -3,22 +3,44 @@
 
 <mapper namespace="member">
 
+    <select id="selectMemberListExceptMe" parameterType="java.lang.String" resultType="Member">
+        SELECT *
+        FROM member
+        WHERE id != #{id}
+    </select>
+
     <select id="isExistMember" parameterType="java.lang.String" resultType="Member">
         SELECT id
-               ,email
-               ,pw
-               ,nick
-               ,login_type
+                , email
+                , pw
+                , nick
+                , real_name
+                , login_type
+                , picture_url
+                , thumbnail_image_url
+                , locale
+                , gender
+                , age
+                , birth
+                , sub_id
           FROM member
          WHERE id = #{id}
     </select>
 
     <select id="selectOneMemberByEmail" parameterType="java.lang.String" resultType="Member">
         SELECT id
-               ,email
-               ,pw
-               ,nick
-               ,login_type
+                , email
+                , pw
+                , nick
+                , real_name
+                , login_type
+                , picture_url
+                , thumbnail_image_url
+                , locale
+                , gender
+                , age
+                , birth
+                , sub_id
           FROM member
          WHERE email = #{email}
     </select>

@@ -1,5 +1,6 @@
 package com.ndgndg91.model.enums;
 
+
 public enum LoginType {
     GOOGLE{
         @Override
