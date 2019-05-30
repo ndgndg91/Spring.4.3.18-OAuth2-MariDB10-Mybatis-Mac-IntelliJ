@@ -8,10 +8,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<html>
+<!DOCTYPE html>
+<html lang="ko">
   <head>
     <title>Hi</title>
-    <script src="/static/vender/jquery/jquery-3.2.1.min.js"></script>
+    <script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
     <script src="/static/js/common.js"></script>
   </head>
   <body>
@@ -51,7 +52,9 @@
         <td>${member.gender}</td>
         <td>${member.age}</td>
         <td>${member.birth}</td>
-        <td><button id="applyFriendBtn" data-value="${member.id}">친구 신청</button></td>
+        <form action="/apply/friend" method="post">
+          <td><button id="applyFriendBtn" data-value="${member.id}">친구 신청</button></td>
+        </form>
       </tr>
     </c:forEach>
   </c:if>

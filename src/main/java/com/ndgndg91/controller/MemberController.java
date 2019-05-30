@@ -14,11 +14,13 @@ import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
 
 import static com.ndgndg91.model.enums.LoginType.*;
 
@@ -83,5 +85,11 @@ public class MemberController {
             session.invalidate();
             return "redirect:/";
         }
+    }
+
+    @PostMapping("/apply/friend")
+    public String applyFriend(@RequestParam Map<String, Object> paramMap){
+//        paramMap.get("")
+        return "redirect:/";
     }
 }
