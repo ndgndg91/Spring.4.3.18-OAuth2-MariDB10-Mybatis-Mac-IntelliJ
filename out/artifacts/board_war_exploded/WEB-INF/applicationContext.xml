@@ -33,6 +33,7 @@
 
     <bean id="googleOAuth2Parameters"
           class="org.springframework.social.oauth2.OAuth2Parameters">
+        <qualifier value="googleOAuth2Parameters"/>
         <property name="scope"
                   value="email profile"/>
         <property name="redirectUri"
@@ -43,6 +44,21 @@
         <constructor-arg
                 value="337183749653-8na0q9g91v3mf808bjuve33vdce4q9b2.apps.googleusercontent.com"/>
         <constructor-arg value="JRU2Y2w33b4GK3WHCFEZ_u79"/>
+    </bean>
+
+
+    <!--Facebook 소셜 로그인 연결 설정-->
+    <bean id="facebookConnectionFactory"
+          class="org.springframework.social.facebook.connect.FacebookConnectionFactory">
+        <constructor-arg value="2343338075913077" />
+        <constructor-arg value="d6178f43cca32c5d23a98e39c3c35c29" />
+    </bean>
+
+    <bean id="facebookOAuth2Parameters"
+          class="org.springframework.social.oauth2.OAuth2Parameters">
+        <qualifier value="facebookOAuth2Parameters"/>
+        <property name="scope" value="email" />
+        <property name="redirectUri" value="https://localhost:8080/auth/facebook/redirect" />
     </bean>
 
     <bean id="freeMarkerConfigurationFactory" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
