@@ -1,8 +1,8 @@
 package com.ndgndg91.service;
 
 import com.ndgndg91.dao.MemberDao;
+import com.ndgndg91.model.FriendDTO;
 import com.ndgndg91.model.MemberDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,8 +10,10 @@ import java.util.List;
 @Service
 public class MemberService {
 
-    @Autowired
     private MemberDao memberDao;
+    public MemberService(MemberDao memberDao){
+        this.memberDao = memberDao;
+    }
 
     public List<Object> selectMemberListExceptMe(String id){ return memberDao.selectMemberListExceptMe(id);}
 
@@ -30,4 +32,9 @@ public class MemberService {
     public void insertMemberExcludePwParameter(MemberDTO memberDTO) {
         memberDao.insertMemberExcludePwParameter(memberDTO);
     }
+
+    public void applyFriend(FriendDTO friendDTO){
+        memberDao.applyFriend(friendDTO);
+    }
 }
+

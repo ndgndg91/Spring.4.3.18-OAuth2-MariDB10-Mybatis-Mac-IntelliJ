@@ -1,11 +1,16 @@
 package com.ndgndg91.controller;
 
-import com.ndgndg91.model.enums.LoginType;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ndgndg91.model.FriendDTO;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.google.connect.GoogleConnectionFactory;
 import org.springframework.social.oauth2.GrantType;
@@ -13,14 +18,10 @@ import org.springframework.social.oauth2.OAuth2Operations;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
-import java.util.Map;
 
 import static com.ndgndg91.model.enums.LoginType.*;
 
@@ -87,9 +88,17 @@ public class MemberController {
         }
     }
 
+    @ResponseBody
     @PostMapping("/apply/friend")
-    public String applyFriend(@RequestParam Map<String, Object> paramMap){
-//        paramMap.get("")
-        return "redirect:/";
+    public ResponseEntity<String> applyFriend(FriendDTO friendDTO) throws JsonProcessingException {
+        String returnString = "친구 신청 성공";
+        try {
+            memberService.applyFriend(friendDTO);
+        } catch (Exception e) {
+            returnString = "친구 신청 실패";
+        }
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>(new ObjectMapper().writeValueAsString(returnString), resHeaders, HttpStatus.CREATED);
     }
 }

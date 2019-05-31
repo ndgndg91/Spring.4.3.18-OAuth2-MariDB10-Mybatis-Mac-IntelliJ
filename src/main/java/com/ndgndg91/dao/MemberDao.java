@@ -1,8 +1,8 @@
 package com.ndgndg91.dao;
 
+import com.ndgndg91.model.FriendDTO;
 import com.ndgndg91.model.MemberDTO;
 import org.apache.ibatis.session.SqlSession;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -10,8 +10,11 @@ import java.util.List;
 @Repository
 public class MemberDao {
 
-    @Autowired
     private SqlSession sqlSession;
+
+    public MemberDao(SqlSession sqlSession){
+        this.sqlSession = sqlSession;
+    }
 
     public List<Object> selectMemberListExceptMe(String id){ return sqlSession.selectList("member.selectMemberListExceptMe", id);}
 
@@ -29,5 +32,9 @@ public class MemberDao {
 
     public void insertMemberExcludePwParameter(MemberDTO memberDTO) {
         sqlSession.insert("member.insertMemberExcludePwParameter", memberDTO);
+    }
+
+    public void applyFriend(FriendDTO friendDTO){
+        sqlSession.insert("member.applyFriend", friendDTO);
     }
 }

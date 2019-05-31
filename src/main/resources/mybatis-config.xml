@@ -14,5 +14,6 @@
 
     <typeAliases>
         <typeAlias type="com.ndgndg91.model.MemberDTO" alias="Member"/>
+        <typeAlias type="com.ndgndg91.model.FriendDTO" alias="Friend"/>
     </typeAliases>
 </configuration>

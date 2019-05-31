@@ -52,16 +52,12 @@
         <td>${member.gender}</td>
         <td>${member.age}</td>
         <td>${member.birth}</td>
-        <form action="/apply/friend" method="post">
-          <td><button id="applyFriendBtn" data-value="${member.id}">친구 신청</button></td>
-        </form>
+        <td><button id="applyFriendBtn" data-value="${member.id}" onclick="CommonCtrl.commonAjax('/apply/friend','POST',{'applicantNo':'${sessionScope.loginUserInfo.id}', 'acceptorNo': '${member.id}'});">친구 신청</button></td>
       </tr>
     </c:forEach>
   </c:if>
     </tbody>
   </table>
-  <button onclick="$cmmnCtrl();">require 테스트</button>
-
   </body>
 </html>
 

@@ -54,4 +54,8 @@
         VALUES (#{id}, #{email}, #{nick}, #{realName}, #{loginType}, #{pictureUrl}, #{thumbnailImageUrl}, #{locale}, #{gender}, #{age}, #{birth}, #{subId})
     </insert>
 
+    <insert id="applyFriend" parameterType="Friend">
+        INSERT INTO friend_apply(applicantNo, acceptorNo) VALUES (#{applicantNo}, #{acceptorNo})
+    </insert>
+
 </mapper>
