@@ -3,6 +3,7 @@ package com.ndgndg91.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ndgndg91.model.FriendDTO;
+import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 
 import static com.ndgndg91.model.enums.LoginType.*;
 
@@ -46,6 +48,8 @@ public class MemberController {
     @Autowired
     @Qualifier("facebookOAuth2Parameters")
     private OAuth2Parameters facebookOAuth2Parameters;
+
+    private static final ObjectMapper mapper = new ObjectMapper();
 
     @RequestMapping("/login")
     public String enterLogin(Model model, HttpSession session) throws UnsupportedEncodingException {
@@ -95,10 +99,30 @@ public class MemberController {
         try {
             memberService.applyFriend(friendDTO);
         } catch (Exception e) {
+            e.printStackTrace();
             returnString = "친구 신청 실패";
         }
         HttpHeaders resHeaders = new HttpHeaders();
         resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>(new ObjectMapper().writeValueAsString(returnString), resHeaders, HttpStatus.CREATED);
+        return new ResponseEntity<>(mapper.writeValueAsString(returnString), resHeaders, HttpStatus.CREATED);
+    }
+
+    @ResponseBody
+    @GetMapping("/applyFor/friend")
+    public ResponseEntity<String> applyForFriendList(HttpSession session) throws JsonProcessingException {
+        String loginUserId = ((MemberDTO)session.getAttribute("loginUserInfo")).getId();
+        List<MemberDTO> applicantList =  memberService.selectApplicantMemberListForMe(loginUserId);
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+        return new ResponseEntity<>(mapper.writeValueAsString(applicantList), resHeaders, HttpStatus.CREATED);
+    }
+
+    @ResponseBody
+    @PostMapping("/accept/friend")
+    public ResponseEntity<String> acceptFriend(FriendDTO friendDTO) throws JsonProcessingException {
+        HttpHeaders resHeaders = new HttpHeaders();
+        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
+        String result = memberService.acceptFriend(friendDTO);
+        return new ResponseEntity<>(mapper.writeValueAsString(result), resHeaders, HttpStatus.CREATED);
     }
 }

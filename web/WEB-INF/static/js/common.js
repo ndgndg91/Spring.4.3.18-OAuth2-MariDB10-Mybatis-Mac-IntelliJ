@@ -6,10 +6,9 @@ var CommonCtrl = {
             data: data,
             dataType : "json",
             success : function (msg) {
-                alert(msg);
                 console.log(msg);
                 if (successCallback)
-                    successCallback();
+                    successCallback(msg);
             },
             error : function (jqXHR, testStatus, errorThrown) {
                 console.log(jqXHR);

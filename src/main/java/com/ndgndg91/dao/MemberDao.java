@@ -16,7 +16,9 @@ public class MemberDao {
         this.sqlSession = sqlSession;
     }
 
-    public List<Object> selectMemberListExceptMe(String id){ return sqlSession.selectList("member.selectMemberListExceptMe", id);}
+    public List<MemberDTO> selectMemberListExceptMe(String id){ return sqlSession.selectList("member.selectMemberListExceptMe", id);}
+
+    public List<MemberDTO> selectApplicantMemberListForMe(String id){ return sqlSession.selectList("member.selectApplicantMemberListForMe", id);}
 
     public MemberDTO selectOneMemberById(String id){
         return sqlSession.selectOne("member.isExistMember", id);
@@ -36,5 +38,13 @@ public class MemberDao {
 
     public void applyFriend(FriendDTO friendDTO){
         sqlSession.insert("member.applyFriend", friendDTO);
+    }
+
+    public void acceptFriendFirst(FriendDTO friendDTO){
+        sqlSession.update("member.acceptFriendFirst", friendDTO);
+    }
+
+    public void acceptFriendSecond(FriendDTO friendDTO){
+        sqlSession.insert("member.acceptFriendSecond", friendDTO);
     }
 }

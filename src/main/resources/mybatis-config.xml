@@ -15,5 +15,6 @@
     <typeAliases>
         <typeAlias type="com.ndgndg91.model.MemberDTO" alias="Member"/>
         <typeAlias type="com.ndgndg91.model.FriendDTO" alias="Friend"/>
+        <typeAlias type="java.util.HashMap" alias="hashMap" />
     </typeAliases>
 </configuration>

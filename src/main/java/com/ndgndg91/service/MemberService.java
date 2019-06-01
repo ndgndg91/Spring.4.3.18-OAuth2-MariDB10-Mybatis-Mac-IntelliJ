@@ -4,6 +4,7 @@ import com.ndgndg91.dao.MemberDao;
 import com.ndgndg91.model.FriendDTO;
 import com.ndgndg91.model.MemberDTO;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -15,7 +16,9 @@ public class MemberService {
         this.memberDao = memberDao;
     }
 
-    public List<Object> selectMemberListExceptMe(String id){ return memberDao.selectMemberListExceptMe(id);}
+    public List<MemberDTO> selectMemberListExceptMe(String id){ return memberDao.selectMemberListExceptMe(id);}
+
+    public List<MemberDTO> selectApplicantMemberListForMe(String id){ return memberDao.selectApplicantMemberListForMe(id);}
 
     public MemberDTO selectOneMemberById(String id){
         return memberDao.selectOneMemberById(id);
@@ -35,6 +38,17 @@ public class MemberService {
 
     public void applyFriend(FriendDTO friendDTO){
         memberDao.applyFriend(friendDTO);
+    }
+
+    @Transactional
+    public String acceptFriend(FriendDTO friendDTO){
+        try {
+            memberDao.acceptFriendFirst(friendDTO);
+            memberDao.acceptFriendSecond(friendDTO);
+        } catch (Exception e){
+            return "친구 추가 실패";
+        }
+        return "친구 추가 성공";
     }
 }
 
