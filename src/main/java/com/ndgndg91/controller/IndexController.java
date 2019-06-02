@@ -4,7 +4,6 @@ import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,8 +14,10 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class IndexController {
 
-    @Autowired
     private MemberService memberService;
+    public IndexController(MemberService memberService){
+        this.memberService = memberService;
+    }
 
     @RequestMapping(value = "/")
     public String index(HttpSession session, Model model) {

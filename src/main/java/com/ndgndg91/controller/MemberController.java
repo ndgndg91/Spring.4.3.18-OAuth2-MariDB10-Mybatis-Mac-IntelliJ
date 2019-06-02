@@ -32,24 +32,26 @@ import static com.ndgndg91.model.enums.LoginType.*;
 @Controller
 public class MemberController {
 
-    @Autowired
+    private static final ObjectMapper mapper = new ObjectMapper();
     private MemberService memberService;
-
-    @Autowired
     private GoogleConnectionFactory googleConnectionFactory;
-
-    @Autowired
-    @Qualifier("googleOAuth2Parameters")
     private OAuth2Parameters googleOAuth2Parameters;
-
-    @Autowired
     private FacebookConnectionFactory facebookConnectionFactory;
-
-    @Autowired
-    @Qualifier("facebookOAuth2Parameters")
     private OAuth2Parameters facebookOAuth2Parameters;
 
-    private static final ObjectMapper mapper = new ObjectMapper();
+    public MemberController(MemberService memberService, GoogleConnectionFactory googleConnectionFactory, OAuth2Parameters googleOAuth2Parameters,
+                            FacebookConnectionFactory facebookConnectionFactory, OAuth2Parameters facebookOAuth2Parameters){
+        this.memberService = memberService;
+        this.googleConnectionFactory = googleConnectionFactory;
+        this.googleOAuth2Parameters = googleOAuth2Parameters;
+        this.facebookConnectionFactory = facebookConnectionFactory;
+        this.facebookOAuth2Parameters = facebookOAuth2Parameters;
+    }
+
+    @RequestMapping("/join")
+    public String enterJoin(){
+        return "/member/join";
+    }
 
     @RequestMapping("/login")
     public String enterLogin(Model model, HttpSession session) throws UnsupportedEncodingException {
