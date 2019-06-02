@@ -64,6 +64,8 @@
         <div class="form-group">
             <label for="uPicture">사 진</label>
             <input type="file" id="uPicture" name="uPicture">
+            <div class="imgs_wrap">
+            </div>
         </div>
         <button type="submit" class="btn btn-primary">제출</button>
     </form>
@@ -84,7 +86,45 @@
                 down: "fa fa-arrow-down"
             }
         });
+        $('#uPicture').on("change",handleImgsFilesSelect);
     });
+
+    function handleImgsFilesSelect(e) {
+        $('.imgs_wrap').empty();
+        var files = e.target.files;
+        var filesArr = Array.prototype.slice.call(files);
+
+        var index = 0;
+        filesArr.forEach(function(f) {
+            if(!f.type.match("image.*")){
+                alert("확장자는 이미지 확장자만 가능합니다.");
+                return;
+            }
+
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var html = "<a href=\"javascript:void(0);\" onclick=\"deleteImageAction("+index+")\" id=\"img_id_"+index+"\"><img src=\"" + e.target.result +"\" data-file='"+f.name+"' class='selProductFile' alt='클릭 시 삭제' title='Click to remove' width=200px height=200px></a>";
+                /* var img_html = "<img src=\"" + e.target.result + "\" width=200px height=200px />";
+                $(".imgs_wrap").append(img_html); */
+                $(".imgs_wrap").append(html);
+                index++;
+            };
+            reader.readAsDataURL(f);
+
+        });
+    }
+
+
+    function deleteImageAction(index){
+        console.log("index : "+index);
+        var imageFileList = Array.from($('#uPicture')[0].files);
+        console.log(imageFileList);
+        delete imageFileList.splice(index, 1);
+        console.log(imageFileList);
+        var img_id = "#img_id_" + index;
+        $(img_id).remove();
+        $('#uPicture').val('');
+    }
 </script>
 </body>
 </html>
