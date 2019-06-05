@@ -18,7 +18,7 @@
 <body>
 <div class="container">
     <h1>회원 가입</h1>
-    <form>
+    <form action="/upload/imgFile" method="post">
         <div class="form-group">
             <label for="uEmail">이메일 주소</label>
             <input type="email" class="form-control" id="uEmail" name="uEmail" placeholder="이메일을 입력하세요">

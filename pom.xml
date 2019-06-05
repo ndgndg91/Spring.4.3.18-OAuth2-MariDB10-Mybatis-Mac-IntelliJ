@@ -217,5 +217,19 @@
             <artifactId>commons-csv</artifactId>
             <version>1.6</version>
         </dependency>
+
+        <!-- File Upload -->
+        <dependency>
+            <groupId>commons-fileupload</groupId>
+            <artifactId>commons-fileupload</artifactId>
+            <version>1.4</version>
+        </dependency>
+
+        <!-- Thumbnail -->
+        <dependency>
+            <groupId>org.imgscalr</groupId>
+            <artifactId>imgscalr-lib</artifactId>
+            <version>4.2</version>
+        </dependency>
     </dependencies>
 </project>

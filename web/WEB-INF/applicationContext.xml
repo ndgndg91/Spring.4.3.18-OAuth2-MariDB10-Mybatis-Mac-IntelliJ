@@ -3,13 +3,18 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="/WEB-INF/config/config.properties"/>
+        <property name="fileEncoding" value="UTF-8"/>
+    </bean>
+
     <!-- dataSource -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
         <property name="url"
-                  value="jdbc:mysql://localhost:3307/test?useSSL=false&amp;serverTimezone=Asia/Seoul"/>
-        <property name="username" value=""/>
-        <property name="password" value=""/>
+                  value="${db.url}"/>
+        <property name="username" value="${db.username}"/>
+        <property name="password" value="${db.password}"/>
     </bean>
 
     <!-- sessionFactory -->
@@ -26,8 +31,8 @@
     <bean id="googleConnectionFactory"
           class="org.springframework.social.google.connect.GoogleConnectionFactory">
         <constructor-arg
-                value=""/>
-        <constructor-arg value=""/>
+                value="${google.clientId}"/>
+        <constructor-arg value="${google.secretId}"/>
     </bean>
 
 
@@ -42,16 +47,16 @@
 
     <bean id="authInfo" class="com.ndgndg91.auth.AuthInfo">
         <constructor-arg
-                value=""/>
-        <constructor-arg value=""/>
+                value="${google.clientId}"/>
+        <constructor-arg value="${google.secretId}"/>
     </bean>
 
 
     <!--Facebook 소셜 로그인 연결 설정-->
     <bean id="facebookConnectionFactory"
           class="org.springframework.social.facebook.connect.FacebookConnectionFactory">
-        <constructor-arg value="" />
-        <constructor-arg value="" />
+        <constructor-arg value="${facebook.appId}" />
+        <constructor-arg value="${facebook.secretId}" />
     </bean>
 
     <bean id="facebookOAuth2Parameters"
@@ -64,5 +69,9 @@
     <bean id="freeMarkerConfigurationFactory" class="org.springframework.ui.freemarker.FreeMarkerConfigurationFactoryBean">
         <property name="templateLoaderPath" value="/WEB-INF/freemarker"/>
         <property name="preferFileSystemAccess" value="false"/>
+    </bean>
+
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="10485760"/> <!-- 10mb 제한 -->
     </bean>
 </beans>
