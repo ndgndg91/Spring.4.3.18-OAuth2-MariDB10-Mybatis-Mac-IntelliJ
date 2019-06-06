@@ -45,10 +45,21 @@
                   value="http://localhost:8080/auth/google/callback"/>
     </bean>
 
-    <bean id="authInfo" class="com.ndgndg91.auth.AuthInfo">
-        <constructor-arg
-                value="${google.clientId}"/>
+    <bean id="googleAuthInfo" class="com.ndgndg91.auth.GoogleAuthInfo">
+        <constructor-arg value="${google.clientId}"/>
         <constructor-arg value="${google.secretId}"/>
+    </bean>
+
+    <bean id="kakaoAuthInfo" class="com.ndgndg91.auth.KaKaoAuth2Info">
+        <constructor-arg value="${kakao.clientId}"/>
+        <constructor-arg value="${kakao.redirectUri}"/>
+    </bean>
+
+    <bean id="naverAuthInfo" class="com.ndgndg91.auth.NaverAuthInfo">
+        <constructor-arg value="${naver.clientId}"/>
+        <constructor-arg value="${naver.clientSecret}"/>
+        <constructor-arg value="${naver.redirecUrl}"/>
+        <constructor-arg value="${naver.profileApiUrl}"/>
     </bean>
 
 

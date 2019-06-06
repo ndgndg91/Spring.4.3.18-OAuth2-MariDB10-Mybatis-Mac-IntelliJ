@@ -1,7 +1,7 @@
 package com.ndgndg91.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ndgndg91.auth.AuthInfo;
+import com.ndgndg91.auth.GoogleAuthInfo;
 import com.ndgndg91.controller.LoginInterface.Login;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
@@ -10,8 +10,6 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.*;
 import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Controller;
@@ -21,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -36,15 +33,15 @@ import static com.ndgndg91.model.enums.LoginType.GOOGLE;
 @Controller
 public class GoogleController implements Login {
 
-    @Autowired
     private MemberService memberService;
-
-    @Inject
-    private AuthInfo authInfo;
-
-    @Autowired
-    @Qualifier("googleOAuth2Parameters")
+    private GoogleAuthInfo googleAuthInfo;
     private OAuth2Parameters googleOAuth2Parameters;
+
+    public GoogleController(MemberService memberService, GoogleAuthInfo googleAuthInfo, OAuth2Parameters googleOAuth2Parameters){
+        this.memberService = memberService;
+        this.googleAuthInfo = googleAuthInfo;
+        this.googleOAuth2Parameters = googleOAuth2Parameters;
+    }
 
     @RequestMapping(value = "/auth/google/callback")
     public String doSessionAssignActionPage(HttpServletRequest request, @RequestParam Map<String, Object> paramMap,
@@ -59,8 +56,8 @@ public class GoogleController implements Login {
         RestTemplate restTemplate = new RestTemplate();
         MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
         parameters.add("code", code);
-        parameters.add("client_id", authInfo.getClientId());
-        parameters.add("client_secret", authInfo.getClientSecret());
+        parameters.add("client_id", googleAuthInfo.getClientId());
+        parameters.add("client_secret", googleAuthInfo.getClientSecret());
         parameters.add("redirect_uri", googleOAuth2Parameters.getRedirectUri());
         parameters.add("grant_type", "authorization_code");
 

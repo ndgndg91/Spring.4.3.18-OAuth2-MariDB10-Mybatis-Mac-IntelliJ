@@ -1,13 +1,15 @@
 package com.ndgndg91.auth;
 
-import lombok.Data;
+import lombok.Getter;
 
-@Data
-public class AuthInfo {
+@Getter
+public class GoogleAuthInfo {
     private String clientId;
     private String clientSecret;
 
-    public AuthInfo(String clientId, String clientSecret) {
+    private GoogleAuthInfo(){}
+
+    private GoogleAuthInfo(String clientId, String clientSecret) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
     }

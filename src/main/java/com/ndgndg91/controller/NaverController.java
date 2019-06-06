@@ -1,12 +1,12 @@
 package com.ndgndg91.controller;
 
+import com.ndgndg91.auth.NaverAuthInfo;
 import com.ndgndg91.common.JsonUtils;
 import com.ndgndg91.controller.LoginInterface.Login;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +16,7 @@ import javax.servlet.http.HttpSession;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
 import java.net.*;
-import java.security.SecureRandom;
 import java.util.Optional;
 
 import static com.ndgndg91.model.enums.LoginType.NAVER;
@@ -27,14 +24,14 @@ import static com.ndgndg91.model.enums.LoginType.NAVER;
 @Log4j
 @Controller
 public class NaverController implements Login {
-    private static final String CLIENT_ID = "aKzz8HPYVueuyowOPc55";
-    private static final String CLIENT_SECRET = "gmThUARPjr";
-    private static final String N_REDIRECT_URL = "http://localhost:8080/auth/naver/redirect";
-    private static final String N_ACCESS_TOKEN_URL = "https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id=" + CLIENT_ID + "&client_secret=" + CLIENT_SECRET + "&redirect_uri=" + N_REDIRECT_URL;
-    private final static String PROFILE_API_URL = "https://openapi.naver.com/v1/nid/me";
 
-    @Autowired
     private MemberService memberService;
+    private NaverAuthInfo naverAuthInfo;
+
+    public NaverController(MemberService memberService, NaverAuthInfo naverAuthInfo){
+        this.memberService = memberService;
+        this.naverAuthInfo = naverAuthInfo;
+    }
 
     @RequestMapping(value = "/auth/naver/logout")
     public String naverLogout(HttpSession session){
@@ -48,7 +45,7 @@ public class NaverController implements Login {
         String code = request.getParameter("code");
         String state = request.getParameter("state");
         StringBuilder apiURL = new StringBuilder()
-                .append(N_ACCESS_TOKEN_URL)
+                .append(naverAuthInfo.getAccessTokenUrl())
                 .append("&code=").append(code)
                 .append("&state=").append(state);
         try {
@@ -132,7 +129,7 @@ public class NaverController implements Login {
     }
 
     private HttpURLConnection getNaverUserInfoHttpURLConnection(String access_token) throws IOException {
-        URL url = new URL(PROFILE_API_URL);
+        URL url = new URL(naverAuthInfo.getProfileApiUrl());
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("GET");
         con.setRequestProperty("Authorization", "Bearer "+access_token);
@@ -155,13 +152,4 @@ public class NaverController implements Login {
         }
         return res;
     }
-
-    public static String getNaverLoginUrl(HttpSession session) throws UnsupportedEncodingException {
-        String redirectURI = URLEncoder.encode(N_REDIRECT_URL, "UTF-8");
-        SecureRandom random = new SecureRandom();
-        String state = new BigInteger(130, random).toString();
-        session.setAttribute("state", state);
-        return "https://nid.naver.com/oauth2.0/authorize?response_type=code" + "&client_id=" + CLIENT_ID + "&redirect_uri=" + redirectURI + "&state=" + state;
-    }
-
 }
