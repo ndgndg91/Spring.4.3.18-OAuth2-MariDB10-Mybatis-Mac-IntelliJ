@@ -18,7 +18,7 @@
 <body>
 <div class="container">
     <h1>회원 가입</h1>
-    <form action="/upload/imgFile" method="post">
+    <form action="/upload/imgFile" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="uEmail">이메일 주소</label>
             <input type="email" class="form-control" id="uEmail" name="uEmail" placeholder="이메일을 입력하세요">
@@ -33,16 +33,16 @@
         </div>
         <div class="form-group">
             <label for="uRealName">이 름</label>
-            <input type="password" class="form-control" id="uRealName" name="uRealName" placeholder="이름">
+            <input type="text" class="form-control" id="uRealName" name="uRealName" placeholder="이름">
         </div>
         <div class="form-group">
             <label for="uNick">별 명</label>
-            <input type="password" class="form-control" id="uNick" name="uNick" placeholder="서비스에서 사용할 닉네임">
+            <input type="text" class="form-control" id="uNick" name="uNick" placeholder="서비스에서 사용할 닉네임">
         </div>
         <div class="form-group">
             <label>생 일</label>
             <div class='input-group date dateTimePicker' id="datepicker1">
-                <input type='text' class="form-control" name="openDate" required="required"/>
+                <input type='text' class="form-control" name="uBirth" required="required"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>

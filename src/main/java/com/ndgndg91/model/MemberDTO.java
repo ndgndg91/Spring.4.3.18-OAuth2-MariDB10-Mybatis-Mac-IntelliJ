@@ -137,6 +137,7 @@ public class MemberDTO {
         this.email = builder.email;
         this.pw = builder.pw;
         this.nick = builder.nick;
+        this.realName = builder.realName;
         this.loginType = builder.loginType;
         this.pictureUrl = builder.pictureUrl;
         this.thumbnailImageUrl = builder.thumbnailImageUrl;
