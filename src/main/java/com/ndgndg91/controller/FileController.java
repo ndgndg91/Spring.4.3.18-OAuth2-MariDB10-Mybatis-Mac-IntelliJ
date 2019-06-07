@@ -1,5 +1,6 @@
 package com.ndgndg91.controller;
 
+import com.ndgndg91.common.FileUtils;
 import com.ndgndg91.model.MemberDTO;
 import lombok.extern.log4j.Log4j;
 import org.springframework.stereotype.Controller;
@@ -9,7 +10,6 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 
-import java.io.*;
 import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -22,7 +22,7 @@ public class FileController {
     private static final Pattern notStringPattern = Pattern.compile("([^a-zA-z])");
 
     @PostMapping("/upload/imgFile")
-    public void uploadImageFile(MultipartHttpServletRequest request, HttpServletRequest servletRequest) throws IOException {
+    public void uploadImageFile(MultipartHttpServletRequest request, HttpServletRequest servletRequest) {
         String email = request.getParameter("uEmail");
         String uPassword = request.getParameter("uPassword");
         String uRealName = request.getParameter("uRealName");
@@ -51,24 +51,10 @@ public class FileController {
 
         String rootPath = servletRequest.getSession().getServletContext().getRealPath("/");
         String imgFilePath = rootPath + "upload/" + memberId + "/";
-        File folder = new File(imgFilePath);
-        if(folder.mkdirs())
-            log.info("폴더 생성 완료!");
         log.info(rootPath);
         log.info(imgFilePath);
 
-
-        File file = convert(imgFilePath, multipartFile);
-//        if(file.mkdirs())
-//            log.info("폴더 생성 완료");
-    }
-
-    private File convert(String path, MultipartFile file) throws IOException {
-        File conFile = new File(path, file.getOriginalFilename());
-        conFile.createNewFile();
-        FileOutputStream fos = new FileOutputStream(conFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return conFile;
+        FileUtils.makeDirectory(imgFilePath);
+        FileUtils.uploadImageOfMember(imgFilePath, multipartFile);
     }
 }

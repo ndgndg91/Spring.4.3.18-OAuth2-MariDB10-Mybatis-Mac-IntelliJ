@@ -11,6 +11,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="/static/datepicker/datetimepickerstyle.css"/>
     <title>회원 가입</title>
@@ -18,63 +19,77 @@
 <body>
 <div class="container">
     <h1>회원 가입</h1>
-    <form action="/upload/imgFile" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col">
+    <form id="joinForm" action="/upload/imgFile" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="uEmail">이메일 주소</label>
-            <input type="email" class="form-control" id="uEmail" name="uEmail" placeholder="이메일을 입력하세요">
+            <input type="email" class="form-control" id="uEmail" name="uEmail" placeholder="이메일을 입력하세요" required>
         </div>
         <div class="form-group">
             <label for="uPassword">암 호</label>
-            <input type="password" class="form-control" id="uPassword" name="uPassword" placeholder="암호">
+            <input type="password" class="form-control" id="uPassword" name="uPassword" placeholder="암호" required>
         </div>
         <div class="form-group">
             <label for="uPasswordCheck">암 호</label>
-            <input type="password" class="form-control" id="uPasswordCheck" name="uPasswordCheck" placeholder="암호 확인">
+            <input type="password" class="form-control" id="uPasswordCheck" name="uPasswordCheck" placeholder="암호 확인" required>
         </div>
         <div class="form-group">
             <label for="uRealName">이 름</label>
-            <input type="text" class="form-control" id="uRealName" name="uRealName" placeholder="이름">
+            <input type="text" class="form-control" id="uRealName" name="uRealName" placeholder="이름" required>
         </div>
         <div class="form-group">
             <label for="uNick">별 명</label>
-            <input type="text" class="form-control" id="uNick" name="uNick" placeholder="서비스에서 사용할 닉네임">
+            <input type="text" class="form-control" id="uNick" name="uNick" placeholder="서비스에서 사용할 닉네임" required>
         </div>
         <div class="form-group">
             <label>생 일</label>
             <div class='input-group date dateTimePicker' id="datepicker1">
-                <input type='text' class="form-control" name="uBirth" required="required"/>
+                <input type='text' class="form-control" name="uBirth" required>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
             </div>
         </div>
         <div class="form-group">
-            <label class="checkbox-inline">
-                <input type="radio" name="uGender" id="uGender1" value="M"> 남자
-            </label>
-            &nbsp;
-            <label class="checkbox-inline">
-                <input type="radio" name="uGender" id="uGender2" value="W"> 여자
-            </label>
-            &nbsp;
-            <label class="checkbox-inline">
-                <input type="radio" name="uGender" id="uGender3" value="O"> 기타
-            </label>
-        </div>
-        <div class="form-group">
-            <label for="uPicture">사 진</label>
-            <input type="file" id="uPicture" name="uPicture">
-            <div class="imgs_wrap">
+            <label>성 별</label>
+            <div class="form-group">
+                <label class="checkbox-inline">
+                    <input type="radio" name="uGender" id="uGender1" value="M" required> 남자
+                </label>
+                &nbsp;
+                <label class="checkbox-inline">
+                    <input type="radio" name="uGender" id="uGender2" value="W" required> 여자
+                </label>
+                &nbsp;
+                <label class="checkbox-inline">
+                    <input type="radio" name="uGender" id="uGender3" value="O" required> 기타
+                </label>
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">제출</button>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="uPicture" name="uPicture" required>
+            <label class="custom-file-label" for="uPicture" id="imageFileName">사 진</label>
+        </div>
+        <div class="form-group">
+            <div class="image_wrap"></div>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary btn-lg btn-block" id="acceptJoin">가 입</button>
+            <button type="button" class="btn btn-dark btn-lg btn-block" id="cancelJoin">취 소</button>
+        </div>
     </form>
+        </div>
+    </div>
 </div>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/locale/ko.js"></script>
 <script src="/static/datepicker/bootstrap-datetimepicker.js"></script>
 <script>
+    var $uPicture;
+    var $imageWrap;
+    var $imageFileName;
     $(function () {
         $('#datepicker1').datetimepicker({
             format: 'YYYY-MM-DD',
@@ -86,11 +101,29 @@
                 down: "fa fa-arrow-down"
             }
         });
-        $('#uPicture').on("change",handleImgsFilesSelect);
+        $('#uEmail').on(
+            'input', function () {
+                console.log("blur 성공");
+                if (!emailIsValid($(this).val())) {
+                    alert("이메일 형식이 아닙니다.");
+                    $(this).focus();
+                }
+            });
+
+        $imageWrap = $('.image_wrap');
+        $uPicture = $('#uPicture');
+        $imageFileName = $('#imageFileName');
+        $uPicture.on("change",handleImgsFilesSelect);
+        $('#cancelJoin').on('click', function () {
+           history.back();
+        });
     });
+    function emailIsValid (email) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    }
 
     function handleImgsFilesSelect(e) {
-        $('.imgs_wrap').empty();
+        $imageWrap.empty();
         var files = e.target.files;
         var filesArr = Array.prototype.slice.call(files);
 
@@ -106,24 +139,25 @@
                 var html = "<a href=\"javascript:void(0);\" onclick=\"deleteImageAction("+index+")\" id=\"img_id_"+index+"\"><img src=\"" + e.target.result +"\" data-file='"+f.name+"' class='selProductFile' alt='클릭 시 삭제' title='Click to remove' width=200px height=200px></a>";
                 /* var img_html = "<img src=\"" + e.target.result + "\" width=200px height=200px />";
                 $(".imgs_wrap").append(img_html); */
-                $(".imgs_wrap").append(html);
+                $imageWrap.append(html);
                 index++;
             };
             reader.readAsDataURL(f);
-
         });
+        $imageFileName.text($uPicture.val());
     }
 
 
     function deleteImageAction(index){
         console.log("index : "+index);
-        var imageFileList = Array.from($('#uPicture')[0].files);
+        var imageFileList = Array.from($uPicture[0].files);
         console.log(imageFileList);
         delete imageFileList.splice(index, 1);
         console.log(imageFileList);
         var img_id = "#img_id_" + index;
         $(img_id).remove();
-        $('#uPicture').val('');
+        $uPicture.val('');
+        $imageFileName.text('사 진');
     }
 </script>
 </body>
