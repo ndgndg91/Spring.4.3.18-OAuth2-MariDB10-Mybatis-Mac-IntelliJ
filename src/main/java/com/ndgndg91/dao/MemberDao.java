@@ -47,4 +47,6 @@ public class MemberDao {
     public void acceptFriendSecond(FriendDTO friendDTO){
         sqlSession.insert("member.acceptFriendSecond", friendDTO);
     }
+
+    public void joinMember(MemberDTO memberDTO) { sqlSession.insert("member.joinMember", memberDTO);}
 }

@@ -4,11 +4,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ndgndg91.auth.KaKaoAuth2Info;
 import com.ndgndg91.auth.NaverAuthInfo;
+import com.ndgndg91.common.FileUtils;
+import com.ndgndg91.controller.LoginInterface.Login;
 import com.ndgndg91.model.FriendDTO;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
+import com.ndgndg91.syno.SynoUploadInfo;
 import lombok.extern.log4j.Log4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,18 +29,25 @@ import org.springframework.social.oauth2.OAuth2Parameters;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.File;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static com.ndgndg91.model.enums.LoginType.*;
-
+import static com.ndgndg91.model.enums.LoginType.DEFAULT;
 
 @Log4j
 @Controller
-public class MemberController {
+public class MemberController implements Login {
 
+    private static final Pattern notStringPattern = Pattern.compile("([^a-zA-z])");
     private static final ObjectMapper mapper = new ObjectMapper();
     private MemberService memberService;
     private GoogleConnectionFactory googleConnectionFactory;
@@ -40,10 +56,12 @@ public class MemberController {
     private OAuth2Parameters facebookOAuth2Parameters;
     private KaKaoAuth2Info kaKaoAuth2Info;
     private NaverAuthInfo naverAuthInfo;
+    private SynoUploadInfo synologyUploadInfo;
 
     public MemberController(MemberService memberService, GoogleConnectionFactory googleConnectionFactory,
                             OAuth2Parameters googleOAuth2Parameters, FacebookConnectionFactory facebookConnectionFactory,
-                            OAuth2Parameters facebookOAuth2Parameters, KaKaoAuth2Info kaKaoAuth2Info, NaverAuthInfo naverAuthInfo){
+                            OAuth2Parameters facebookOAuth2Parameters, KaKaoAuth2Info kaKaoAuth2Info,
+                            NaverAuthInfo naverAuthInfo, SynoUploadInfo synologyUploadInfo) {
         this.memberService = memberService;
         this.googleConnectionFactory = googleConnectionFactory;
         this.googleOAuth2Parameters = googleOAuth2Parameters;
@@ -51,11 +69,7 @@ public class MemberController {
         this.facebookOAuth2Parameters = facebookOAuth2Parameters;
         this.kaKaoAuth2Info = kaKaoAuth2Info;
         this.naverAuthInfo = naverAuthInfo;
-    }
-
-    @RequestMapping("/join")
-    public String enterJoin(){
-        return "/member/join";
+        this.synologyUploadInfo = synologyUploadInfo;
     }
 
     @RequestMapping("/login")
@@ -79,24 +93,77 @@ public class MemberController {
     }
 
     @GetMapping("/logout")
-    public String logout(@RequestParam("loginType") String loginType, HttpSession session){
+    public String logout(@RequestParam("loginType") String loginType, HttpSession session) {
         log.info(loginType);
         return logoutByType(loginType, session);
     }
 
+    @GetMapping("/join")
+    public String enterJoin() {
+        return "/member/join";
+    }
 
-    private String logoutByType(String loginType, HttpSession session){
-        if (StringUtils.equals(KAKAO.toString(), loginType))
-            return "forward:/auth/kakao/logout";
-        else if (StringUtils.equals(NAVER.toString(), loginType))
-            return "forward:/auth/naver/logout";
-        else if (StringUtils.equals(GOOGLE.toString(), loginType))
-            return "forward:/auth/google/logout";
-        else {
-            session.removeAttribute("loginUserInfo");
-            session.invalidate();
-            return "redirect:/";
+    @PostMapping("/join")
+    public String joinProcess(MultipartHttpServletRequest request, HttpServletRequest servletRequest) throws IOException {
+        String email = request.getParameter("uEmail");
+        String uPassword = request.getParameter("uPassword");
+        String uRealName = request.getParameter("uRealName");
+        String uNick = request.getParameter("uNick");
+        String uBirth = request.getParameter("uBirth");
+        String uGender = request.getParameter("uGender");
+        MultipartFile multipartFile = request.getFile("uPicture");
+
+
+        Matcher notStringMatcher = notStringPattern.matcher(email);
+        String prefixId = LocalDate.now().toString().replaceAll("-", "");
+        String suffixId = notStringMatcher.replaceAll("");
+        String memberId = prefixId + suffixId;
+
+//        MemberDTO joinMember = new MemberDTO.Builder(memberId, email).pw(uPassword).loginType(DEFAULT.toString()).realName(uRealName)
+//                .nick(uNick).birth(uBirth).gender(uGender).build();
+//        memberService.joinMember(joinMember);
+        log.info(new MemberDTO.Builder(memberId, email).pw(uPassword).loginType(DEFAULT.toString()).realName(uRealName)
+                .nick(uNick).birth(uBirth).gender(uGender).build().toString());
+
+
+        String rootPath = servletRequest.getSession().getServletContext().getRealPath("/");
+        String imgFilePath = rootPath + "upload/" + memberId + "/";
+        log.info(rootPath);
+        log.info(imgFilePath);
+
+        FileUtils.makeDirectory(imgFilePath);
+        FileUtils.uploadImageOfMember(imgFilePath, multipartFile);
+        synoUpload(multipartFile);
+        return "redirect:/";
+    }
+
+    private void synoUpload(MultipartFile multipartFile) throws IOException {
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpPost postRequest = new HttpPost(synologyUploadInfo.getHost() + synologyUploadInfo.getWebAPI());
+        postRequest.setHeader("Content-Type", "multipart/form-data");
+
+
+        MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+        builder.addTextBody("api", synologyUploadInfo.getApiName());
+        builder.addTextBody("version", synologyUploadInfo.getApiVersion());
+        builder.addTextBody("method", synologyUploadInfo.getApiMethod());
+        builder.addTextBody("path", synologyUploadInfo.getUploadPath());
+        builder.addTextBody("create_parents", synologyUploadInfo.getCreateParents());
+        builder.addBinaryBody("file", new File(multipartFile.getOriginalFilename()),
+                ContentType.APPLICATION_OCTET_STREAM, multipartFile.getOriginalFilename());
+        HttpEntity multipart = builder.build();
+        postRequest.setEntity(multipart);
+
+        CloseableHttpResponse response = client.execute(postRequest);
+        if (response.getStatusLine().getStatusCode() == 200) {
+            log.info("업로드 성공");
         }
+        else {
+            log.info("업로드 실패");
+            log.info(response.getStatusLine().getStatusCode());
+        }
+        client.close();
+        log.info("업로드 프로세스 완료");
     }
 
     @ResponseBody
@@ -117,8 +184,8 @@ public class MemberController {
     @ResponseBody
     @GetMapping("/applyFor/friend")
     public ResponseEntity<String> applyForFriendList(HttpSession session) throws JsonProcessingException {
-        String loginUserId = ((MemberDTO)session.getAttribute("loginUserInfo")).getId();
-        List<MemberDTO> applicantList =  memberService.selectApplicantMemberListForMe(loginUserId);
+        String loginUserId = ((MemberDTO) session.getAttribute("loginUserInfo")).getId();
+        List<MemberDTO> applicantList = memberService.selectApplicantMemberListForMe(loginUserId);
         HttpHeaders resHeaders = new HttpHeaders();
         resHeaders.add("Content-Type", "application/json;charset=UTF-8");
         return new ResponseEntity<>(mapper.writeValueAsString(applicantList), resHeaders, HttpStatus.CREATED);

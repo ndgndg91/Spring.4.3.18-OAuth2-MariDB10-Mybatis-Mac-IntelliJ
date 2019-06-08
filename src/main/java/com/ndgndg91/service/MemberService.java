@@ -50,5 +50,9 @@ public class MemberService {
         }
         return "친구 추가 성공";
     }
+
+    public void joinMember(MemberDTO memberDTO){
+        memberDao.joinMember(memberDTO);
+    }
 }
 

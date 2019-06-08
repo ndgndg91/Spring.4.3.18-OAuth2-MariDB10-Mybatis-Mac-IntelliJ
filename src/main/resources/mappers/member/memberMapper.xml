@@ -98,6 +98,9 @@
         INSERT INTO friend(applicantNo, acceptorNo) VALUES (#{applicantNo}, #{acceptorNo})
     </insert>
 
-
+    <insert id="joinMember" parameterType="Member">
+        INSERT INTO member(id, email, pw, nick, real_name, login_type, locale, gender, age, birth)
+        VALUES (#{id}, #{email}, #{pw}, #{nick}, #{realName}, #{loginType}, #{locale}, #{gender}, #{age}, #{birth})
+    </insert>
 
 </mapper>

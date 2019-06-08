@@ -21,10 +21,12 @@
     <h1>회원 가입</h1>
     <div class="row">
         <div class="col">
-    <form id="joinForm" action="/upload/imgFile" method="post" enctype="multipart/form-data">
+    <form id="joinForm" action="/join" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="uEmail">이메일 주소</label>
             <input type="email" class="form-control" id="uEmail" name="uEmail" placeholder="이메일을 입력하세요" required>
+            <label><b style="color: red;" id="validationOfEmailLabel"></b></label>
+            <input type="hidden" id="validationOfEmail" value="true"/>
         </div>
         <div class="form-group">
             <label for="uPassword">암 호</label>
@@ -33,6 +35,8 @@
         <div class="form-group">
             <label for="uPasswordCheck">암 호</label>
             <input type="password" class="form-control" id="uPasswordCheck" name="uPasswordCheck" placeholder="암호 확인" required>
+            <label><b style="color: red;" id="validationOfPasswordLabel"></b></label>
+            <input type="hidden" id="validationOfPassword" value="true"/>
         </div>
         <div class="form-group">
             <label for="uRealName">이 름</label>
@@ -50,6 +54,8 @@
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
             </div>
+            <label><b style="color: red;" id="validationOfBirthLabel"></b></label>
+            <input type="hidden" id="validationOfBirth" value="true"/>
         </div>
         <div class="form-group">
             <label>성 별</label>
@@ -90,6 +96,16 @@
     var $uPicture;
     var $imageWrap;
     var $imageFileName;
+    var $uEmail;
+    var $validationOfEmailLabel;
+    var $validationOfEmail;
+    var $uPassword;
+    var $uPasswordCheck;
+    var $validationOfPasswordLabel;
+    var $validationOfPassword;
+    var $uBirth;
+    var $validationOfBirthLabel;
+    var $validationOfBirth;
     $(function () {
         $('#datepicker1').datetimepicker({
             format: 'YYYY-MM-DD',
@@ -101,15 +117,17 @@
                 down: "fa fa-arrow-down"
             }
         });
-        $('#uEmail').on(
-            'input', function () {
-                console.log("blur 성공");
-                if (!emailIsValid($(this).val())) {
-                    alert("이메일 형식이 아닙니다.");
-                    $(this).focus();
-                }
-            });
 
+        $uEmail = $('#uEmail');
+        $validationOfEmailLabel = $('#validationOfEmailLabel');
+        $validationOfEmail = $('#validationOfEmail');
+        $uPassword = $('#uPassword');
+        $uPasswordCheck = $('#uPasswordCheck');
+        $validationOfPasswordLabel = $('#validationOfPasswordLabel');
+        $validationOfPassword = $('#validationOfPassword');
+        $uBirth = $('#uBirth');
+        $validationOfBirthLabel = $('#validationOfBirthLabel');
+        $validationOfBirth = $('#validationOfBirth');
         $imageWrap = $('.image_wrap');
         $uPicture = $('#uPicture');
         $imageFileName = $('#imageFileName');
@@ -117,9 +135,80 @@
         $('#cancelJoin').on('click', function () {
            history.back();
         });
+
+        $uEmail.on('input', function () {
+            if (!emailIsValid($(this).val())) {
+                $validationOfEmailLabel.text('이메일 형식이 아닙니다.');
+                $validationOfEmail.val('false');
+                return;
+            }
+            $validationOfEmail.val('true');
+            $validationOfEmailLabel.text('');
+        });
+
+        $uEmail.on('blur', function () {
+            if (!emailIsValid($(this).val())) {
+                $validationOfEmailLabel.text('이메일 형식이 아닙니다.');
+                return;
+            }
+            $validationOfEmailLabel.text('');
+        });
+
+        $uPasswordCheck.on('input', function () {
+           var uPassword = $uPassword.val();
+           var uPasswordCheck = $uPasswordCheck.val();
+           if (uPassword !== uPasswordCheck){
+               $validationOfPasswordLabel.text('비밀번호가 일치하지 않습니다.');
+               $validationOfPassword.val('false');
+               return;
+           }
+
+           $validationOfPasswordLabel.text('');
+           $validationOfPassword.val('true');
+        });
+
+        $uPasswordCheck.on('blur', function () {
+            var uPassword = $uPassword.val();
+            var uPasswordCheck = $uPasswordCheck.val();
+            if (uPassword !== uPasswordCheck){
+                $validationOfPasswordLabel.text('비밀번호가 일치하지 않습니다.');
+                $validationOfPassword.val('false');
+                return;
+            }
+
+            $validationOfPasswordLabel.text('');
+            $validationOfPassword.val('true');
+        });
+
+        $uBirth.on('input', function () {
+            if(birthIsValid($(this).val())){
+                $validationOfBirth.val('true');
+                $validationOfBirthLabel.text('');
+                return;
+            }
+
+            $validationOfBirth.val('false');
+            $validationOfBirthLabel.text('날짜 형식이 아닙니다.');
+        });
+
+        $uBirth.on('blur', function () {
+            if(birthIsValid($(this).val())){
+                $validationOfBirth.val('true');
+                $validationOfBirthLabel.text('');
+                return;
+            }
+
+            $validationOfBirth.val('false');
+            $validationOfBirthLabel.text('날짜 형식이 아닙니다.');
+        });
     });
+
     function emailIsValid (email) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    }
+
+    function birthIsValid(birth) {
+        return /^\d{4}-\d{2}-\d{2}$/.test(birth);
     }
 
     function handleImgsFilesSelect(e) {
