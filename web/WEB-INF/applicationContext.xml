@@ -89,7 +89,10 @@
     <bean id="synologyUploadInfo" class="com.ndgndg91.syno.SynoUploadInfo">
         <constructor-arg value="${synology.host}"/>
         <constructor-arg value="${synology.imageUploadPath}"/>
-        <constructor-arg value="${synology.webAPI}"/>
+        <constructor-arg value="${synology.webAPIUploadPost}"/>
+        <constructor-arg value="${synology.webAPILoginAuthGet}"/>
+        <constructor-arg value="${synology.login}"/>
+        <constructor-arg value="${synology.logout}"/>
         <constructor-arg value="${synology.apiName}"/>
         <constructor-arg value="${synology.apiVersion}"/>
         <constructor-arg value="${synology.apiMethod}"/>

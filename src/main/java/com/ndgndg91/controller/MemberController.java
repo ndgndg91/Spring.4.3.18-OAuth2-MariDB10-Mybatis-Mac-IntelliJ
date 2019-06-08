@@ -5,19 +5,23 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ndgndg91.auth.KaKaoAuth2Info;
 import com.ndgndg91.auth.NaverAuthInfo;
 import com.ndgndg91.common.FileUtils;
+import com.ndgndg91.common.JsonUtils;
 import com.ndgndg91.controller.LoginInterface.Login;
 import com.ndgndg91.model.FriendDTO;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
 import com.ndgndg91.syno.SynoUploadInfo;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +38,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -133,13 +137,39 @@ public class MemberController implements Login {
 
         FileUtils.makeDirectory(imgFilePath);
         FileUtils.uploadImageOfMember(imgFilePath, multipartFile);
-        synoUpload(multipartFile);
+        String sid = synoLogin();
+        synoUpload(multipartFile, sid);
+        synoLogout(sid);
         return "redirect:/";
     }
 
-    private void synoUpload(MultipartFile multipartFile) throws IOException {
+    private String synoLogin() throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
-        HttpPost postRequest = new HttpPost(synologyUploadInfo.getHost() + synologyUploadInfo.getWebAPI());
+        String url = synologyUploadInfo.getHost() + synologyUploadInfo.getWebAPIAuthGet() + synologyUploadInfo.getLogin();
+        log.info(url);
+        HttpGet getRequest = new HttpGet(url);
+        CloseableHttpResponse response = client.execute(getRequest);
+        String responseResult = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+        String sid = "";
+        if(StringUtils.equals(JsonUtils.parse1Depth(responseResult, "success"), "true"))
+            sid = JsonUtils.parse2Depth(responseResult, "data", "sid");
+        if (response.getStatusLine().getStatusCode() == 200) {
+            log.info("login 성공");
+            log.info(responseResult);
+        } else {
+            log.info("login 실패");
+            log.info(response.getStatusLine().getStatusCode());
+            log.info(responseResult);
+        }
+        client.close();
+        return sid;
+    }
+
+    private void synoUpload(MultipartFile multipartFile, String sid) throws IOException {
+        CloseableHttpClient client = HttpClients.createDefault();
+        String url = synologyUploadInfo.getHost() + synologyUploadInfo.getWebAPIUploadPost();
+        log.info(url);
+        HttpPost postRequest = new HttpPost(url);
         postRequest.setHeader("Content-Type", "multipart/form-data");
 
 
@@ -149,21 +179,40 @@ public class MemberController implements Login {
         builder.addTextBody("method", synologyUploadInfo.getApiMethod());
         builder.addTextBody("path", synologyUploadInfo.getUploadPath());
         builder.addTextBody("create_parents", synologyUploadInfo.getCreateParents());
-        builder.addBinaryBody("file", new File(multipartFile.getOriginalFilename()),
+        builder.addTextBody("_sid", sid);
+        builder.addBinaryBody("file", multipartFile.getInputStream(),
                 ContentType.APPLICATION_OCTET_STREAM, multipartFile.getOriginalFilename());
         HttpEntity multipart = builder.build();
         postRequest.setEntity(multipart);
 
+
         CloseableHttpResponse response = client.execute(postRequest);
+
         if (response.getStatusLine().getStatusCode() == 200) {
             log.info("업로드 성공");
         }
         else {
             log.info("업로드 실패");
-            log.info(response.getStatusLine().getStatusCode());
         }
         client.close();
         log.info("업로드 프로세스 완료");
+    }
+
+    private void synoLogout(String sid) throws IOException {
+        CloseableHttpClient client = HttpClients.createDefault();
+        String url = synologyUploadInfo.getHost() + synologyUploadInfo.getWebAPIAuthGet() + "_sid=" + sid + "&" + synologyUploadInfo.getLogout();
+        log.info(url);
+        HttpGet getRequest = new HttpGet(url);
+        CloseableHttpResponse response = client.execute(getRequest);
+        String responseResult = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+        if (response.getStatusLine().getStatusCode() == 200) {
+            log.info("로그아웃 성공");
+            log.info(responseResult);
+        } else {
+            log.info("로그아웃 실패");
+            log.info(responseResult);
+        }
+        client.close();
     }
 
     @ResponseBody
