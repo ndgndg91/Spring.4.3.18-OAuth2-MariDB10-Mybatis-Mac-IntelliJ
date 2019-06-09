@@ -1,10 +1,12 @@
 package com.ndgndg91.service;
 
+import com.ndgndg91.common.FileUtils;
 import com.ndgndg91.dao.MemberDao;
 import com.ndgndg91.model.FriendDTO;
 import com.ndgndg91.model.MemberDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -51,7 +53,10 @@ public class MemberService {
         return "친구 추가 성공";
     }
 
-    public void joinMember(MemberDTO memberDTO){
+    @Transactional
+    public void joinMember(MemberDTO memberDTO, String imageFilePath, MultipartFile multipartFile){
+        FileUtils.makeDirectory(imageFilePath);
+        FileUtils.uploadImageOfMember(imageFilePath, multipartFile);
         memberDao.joinMember(memberDTO);
     }
 }
