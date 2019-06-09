@@ -1,7 +1,6 @@
 package com.ndgndg91.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ndgndg91.auth.KaKaoAuth2Info;
 import com.ndgndg91.auth.NaverAuthInfo;
 import com.ndgndg91.common.MemberUtils;
@@ -10,8 +9,6 @@ import com.ndgndg91.model.FriendDTO;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.social.facebook.connect.FacebookConnectionFactory;
 import org.springframework.social.google.connect.GoogleConnectionFactory;
@@ -28,7 +25,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -39,7 +35,6 @@ import static com.ndgndg91.model.enums.LoginType.DEFAULT;
 public class MemberController implements Login {
 
     private static final Pattern notStringPattern = Pattern.compile("([^a-zA-z])");
-    private static final ObjectMapper mapper = new ObjectMapper();
     private MemberService memberService;
     private GoogleConnectionFactory googleConnectionFactory;
     private OAuth2Parameters googleOAuth2Parameters;
@@ -61,7 +56,7 @@ public class MemberController implements Login {
         this.naverAuthInfo = naverAuthInfo;
     }
 
-    @RequestMapping("/login")
+    @GetMapping("/login")
     public String enterLogin(Model model, HttpSession session) throws IOException {
         //URL을 생성한다.
         OAuth2Operations googleOAuthOperations = googleConnectionFactory.getOAuthOperations();
@@ -81,6 +76,13 @@ public class MemberController implements Login {
         return "/member/login";
     }
 
+    @ResponseBody
+    @PostMapping("/login")
+    public ResponseEntity loginProcess(@RequestParam("username") String username,
+                                       @RequestParam("pass") String password, HttpSession session) throws JsonProcessingException {
+        return memberService.loginProcess(username, password, session);
+    }
+
     @GetMapping("/logout")
     public String logout(@RequestParam("loginType") String loginType, HttpSession session) {
         log.info(loginType);
@@ -93,7 +95,7 @@ public class MemberController implements Login {
     }
 
     @PostMapping("/join")
-    public String joinProcess(MultipartHttpServletRequest request, HttpServletRequest servletRequest) throws IOException {
+    public String joinProcess(MultipartHttpServletRequest request, HttpServletRequest servletRequest) {
         String email = request.getParameter("uEmail");
         String uPassword = request.getParameter("uPassword");
         String uRealName = request.getParameter("uRealName");
@@ -101,7 +103,6 @@ public class MemberController implements Login {
         String uBirth = request.getParameter("uBirth");
         String uGender = request.getParameter("uGender");
         MultipartFile multipartFile = request.getFile("uPicture");
-
 
         Matcher notStringMatcher = notStringPattern.matcher(email);
         String prefixId = LocalDate.now().toString().replaceAll("-", "");
@@ -124,35 +125,20 @@ public class MemberController implements Login {
 
     @ResponseBody
     @PostMapping("/apply/friend")
-    public ResponseEntity<String> applyFriend(FriendDTO friendDTO) throws JsonProcessingException {
-        String returnString = "친구 신청 성공";
-        try {
-            memberService.applyFriend(friendDTO);
-        } catch (Exception e) {
-            e.printStackTrace();
-            returnString = "친구 신청 실패";
-        }
-        HttpHeaders resHeaders = new HttpHeaders();
-        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>(mapper.writeValueAsString(returnString), resHeaders, HttpStatus.CREATED);
+    public ResponseEntity applyFriend(FriendDTO friendDTO) throws JsonProcessingException {
+        return memberService.applyFriend(friendDTO);
     }
 
     @ResponseBody
     @GetMapping("/applyFor/friend")
-    public ResponseEntity<String> applyForFriendList(HttpSession session) throws JsonProcessingException {
+    public ResponseEntity applyForFriendList(HttpSession session) throws JsonProcessingException {
         String loginUserId = ((MemberDTO) session.getAttribute("loginUserInfo")).getId();
-        List<MemberDTO> applicantList = memberService.selectApplicantMemberListForMe(loginUserId);
-        HttpHeaders resHeaders = new HttpHeaders();
-        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-        return new ResponseEntity<>(mapper.writeValueAsString(applicantList), resHeaders, HttpStatus.CREATED);
+        return memberService.selectApplicantMemberListForMe(loginUserId);
     }
 
     @ResponseBody
     @PostMapping("/accept/friend")
-    public ResponseEntity<String> acceptFriend(FriendDTO friendDTO) throws JsonProcessingException {
-        HttpHeaders resHeaders = new HttpHeaders();
-        resHeaders.add("Content-Type", "application/json;charset=UTF-8");
-        String result = memberService.acceptFriend(friendDTO);
-        return new ResponseEntity<>(mapper.writeValueAsString(result), resHeaders, HttpStatus.CREATED);
+    public ResponseEntity acceptFriend(FriendDTO friendDTO) throws JsonProcessingException {
+        return memberService.acceptFriend(friendDTO);
     }
 }
