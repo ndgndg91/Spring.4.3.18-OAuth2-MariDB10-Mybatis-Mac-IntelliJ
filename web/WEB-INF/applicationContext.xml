@@ -42,7 +42,7 @@
         <property name="scope"
                   value="email profile"/>
         <property name="redirectUri"
-                  value="http://localhost:8080/auth/google/callback"/>
+                  value="http://ndgndg91.synology.me:7070/board/auth/google/callback"/>
     </bean>
 
     <bean id="googleAuthInfo" class="com.ndgndg91.auth.GoogleAuthInfo">

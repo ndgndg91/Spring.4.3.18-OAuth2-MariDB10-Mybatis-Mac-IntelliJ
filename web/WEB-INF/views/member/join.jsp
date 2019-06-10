@@ -12,8 +12,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="/static/datepicker/datetimepickerstyle.css"/>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/vendor/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/datepicker/datetimepickerstyle.css"/>
     <title>회원 가입</title>
 </head>
 <body>
@@ -21,7 +21,7 @@
     <h1>회원 가입</h1>
     <div class="row">
         <div class="col">
-    <form id="joinForm" action="/join" method="post" enctype="multipart/form-data">
+    <form id="joinForm" action="${pageContext.request.contextPath}/join" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="uEmail">이메일 주소</label>
             <input type="email" class="form-control" id="uEmail" name="uEmail" placeholder="이메일을 입력하세요" required>
@@ -91,7 +91,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/moment.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.0/locale/ko.js"></script>
-<script src="/static/datepicker/bootstrap-datetimepicker.js"></script>
+<script src="${pageContext.request.contextPath}/static/datepicker/bootstrap-datetimepicker.js"></script>
 <script>
     var $uPicture;
     var $imageWrap;

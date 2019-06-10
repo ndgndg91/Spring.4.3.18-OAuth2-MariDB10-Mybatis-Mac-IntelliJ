@@ -110,7 +110,8 @@ public class MemberController implements Login {
         String memberId = prefixId + suffixId;
 
         String rootPath = servletRequest.getSession().getServletContext().getRealPath("/");
-        String imgFilePath = rootPath + "upload/" + memberId + "/";
+//        String imgFilePath = rootPath + "upload/" + memberId + "/";
+        String imgFilePath = "/var/services/homes/ndgndg91/www/image/";
         log.info(rootPath);
         log.info(imgFilePath);
 

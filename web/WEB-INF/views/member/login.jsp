@@ -12,26 +12,26 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
-    <link rel="icon" type="image/png" href="/static/images/icons/favicon.ico"/>
+    <link rel="icon" type="image/png" href="${pageContext.request.contextPath}/static/images/icons/favicon.ico"/>
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/vendor/bootstrap/css/bootstrap.min.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/fonts/iconic/css/material-design-iconic-font.min.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/fonts/iconic/css/material-design-iconic-font.min.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/vendor/animate/animate.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/vendor/animate/animate.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/vendor/css-hamburgers/hamburgers.min.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/vendor/css-hamburgers/hamburgers.min.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/vendor/animsition/css/animsition.min.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/vendor/animsition/css/animsition.min.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/vendor/select2/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/vendor/select2/select2.min.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/vendor/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/vendor/daterangepicker/daterangepicker.css">
     <!--===============================================================================================-->
-    <link rel="stylesheet" type="text/css" href="/static/css/util.css">
-    <link rel="stylesheet" type="text/css" href="/static/css/main.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/css/util.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/static/css/main.css">
     <!--============================================================================================style="background-image: url('/static/images/bg-01.jpg');"===-->
 </head>
 <body>
@@ -69,10 +69,10 @@
 <%--                    <i class="fa fa-facebook-f"></i>--%>
 <%--                </a>--%>
                 <a href="${kakao_url}" class="login100-social-item">
-                    <img src="/static/images/icons/kakaolink_btn_medium/kakaolink_btn_medium.png" alt="KAKAO"/>
+                    <img src="${pageContext.request.contextPath}/static/images/icons/kakaolink_btn_medium/kakaolink_btn_medium.png" alt="KAKAO"/>
                 </a>
                 <a href="${google_url}" class="login100-social-item">
-                    <img src="/static/images/icons/icon-google.png" alt="GOOGLE"/>
+                    <img src="${pageContext.request.contextPath}/static/images/icons/icon-google.png" alt="GOOGLE"/>
                 </a>
                 <a href="${naver_url}" class="login100-social-item">
                     <img src="http://static.nid.naver.com/oauth/small_g_in.PNG" alt="NAVER"/>
@@ -92,25 +92,25 @@
 <div id="dropDownSelect1"></div>
 
 <!--===============================================================================================-->
-<script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
+<script src="${pageContext.request.contextPath}/static/vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--=========/static/======================================================================================-->
-<script src="/static/vendor/animsition/js/animsition.js"></script>
+<script src="${pageContext.request.contextPath}/static/vendor/animsition/js/animsition.js"></script>
 <!--===============================================================================================-->
-<script src="/static/vendor/bootstrap/js/popper.js"></script>
-<script src="/static/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="${pageContext.request.contextPath}/static/vendor/bootstrap/js/popper.js"></script>
+<script src="${pageContext.request.contextPath}/static/vendor/bootstrap/js/bootstrap.min.js"></script>
 <!--===============================================================================================-->
-<script src="/static/vendor/select2/select2.min.js"></script>
+<script src="${pageContext.request.contextPath}/static/vendor/select2/select2.min.js"></script>
 <!--===============================================================================================-->
-<script src="/static/vendor/daterangepicker/moment.min.js"></script>
-<script src="/static/vendor/daterangepicker/daterangepicker.js"></script>
+<script src="${pageContext.request.contextPath}/static/vendor/daterangepicker/moment.min.js"></script>
+<script src="${pageContext.request.contextPath}/static/vendor/daterangepicker/daterangepicker.js"></script>
 <!--===============================================================================================-->
-<script src="/static/vendor/countdowntime/countdowntime.js"></script>
+<script src="${pageContext.request.contextPath}/static/vendor/countdowntime/countdowntime.js"></script>
 <!--===============================================================================================-->
-<script src="/static/js/common.js"></script>
+<script src="${pageContext.request.contextPath}/static/js/common.js"></script>
 <script>
     $(function () {
         $('#loginBtn').on('click', function () {
-            CommonCtrl.commonAjax('/login', 'POST', {'username' : $('#username').val(), 'pass': $('#pass').val()}, function(msg){checkLoginProcessResult(msg)});
+            CommonCtrl.commonAjax('${pageContext.request.contextPath}/login', 'POST', {'username' : $('#username').val(), 'pass': $('#pass').val()}, function(msg){checkLoginProcessResult(msg)});
         });
     });
 

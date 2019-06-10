@@ -12,21 +12,21 @@
 <html lang="ko">
 <head>
     <title>Hi</title>
-    <script src="/static/vendor/jquery/jquery-3.2.1.min.js"></script>
-    <script src="/static/js/common.js"></script>
+    <script src="${pageContext.request.contextPath}/static/vendor/jquery/jquery-3.2.1.min.js"></script>
+    <script src="${pageContext.request.contextPath}/static/js/common.js"></script>
 </head>
 <body>
 <a href="?lang=en" class="btn btn-sm btn-success">English</a> <a href="?lang=ko" class="btn btn-sm btn-success">한글</a>
 <spring:message code="common.welcome"/>
 <c:if test="${empty sessionScope.loginUserInfo}"> <!-- sessionScopre.KaKaoAccessToken가 없으면 -->
-    <button onclick="location.href='/login';">로그인</button>
-    <button onclick="location.href='/join';">회원가입</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/login';">로그인</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/join';">회원가입</button>
     <br/>
     <%--    <button onclick="window.open('/login','로그인', 'scrollbars=yes,resizable=no,top=50%,left=50%,width=400,height=800')">로그인</button>--%>
 </c:if>
 <c:if test="${not empty sessionScope.loginUserInfo }"> <!-- sessionScopre.kakaoUserInfo 있으면 -->
     ${sessionScope.loginUserInfo} 님 방가방가<br/>
-    <a href="/logout?loginType=${sessionScope.loginUserInfo.loginType}">로그아웃</a><br/>
+    <a href="${pageContext.request.contextPath}/logout?loginType=${sessionScope.loginUserInfo.loginType}">로그아웃</a><br/>
     <br/>
     <h1>나와 친구가 되고 싶은 인간들</h1>
     <table>
@@ -66,7 +66,7 @@
                     <td>${member.birth}</td>
                     <td>
                         <button id="applyFriendBtn" data-value="${member.id}"
-                                onclick="CommonCtrl.commonAjax('/apply/friend','POST',{'applicantNo':'${sessionScope.loginUserInfo.id}', 'acceptorNo': '${member.id}'}, function(msg) {
+                                onclick="CommonCtrl.commonAjax('${pageContext.request.contextPath}/apply/friend','POST',{'applicantNo':'${sessionScope.loginUserInfo.id}', 'acceptorNo': '${member.id}'}, function(msg) {
                                         alert(msg);
                                         location.reload();
                                         });">
@@ -80,7 +80,7 @@
     </table>
     <script>
         var getApplicantList = function () {
-            CommonCtrl.commonAjax('/applyFor/friend', 'GET', '', function (msg) {
+            CommonCtrl.commonAjax('${pageContext.request.contextPath}/applyFor/friend', 'GET', '', function (msg) {
                 console.log(msg);
                 var html = [];
                 var images = [];
@@ -98,7 +98,7 @@
                         '(' + member.email + ') 님이 친구 신청을 하셨습니다!',
                         '</td>',
                         '<td>',
-                        '<button onclick="CommonCtrl.commonAjax(\'/accept/friend\',\'POST\',{\'applicantNo\':\'' + member.id + '\', \'acceptorNo\': \'${sessionScope.loginUserInfo.id}\'}, function(msg) {alert(msg); getApplicantList();});">',
+                        '<button onclick="CommonCtrl.commonAjax(\'${pageContext.request.contextPath}/accept/friend\',\'POST\',{\'applicantNo\':\'' + member.id + '\', \'acceptorNo\': \'${sessionScope.loginUserInfo.id}\'}, function(msg) {alert(msg); getApplicantList();});">',
                         '친구 수락',
                         '</button>',
                         '</td>',
@@ -114,8 +114,8 @@
         };
         getApplicantList();
     </script>
-    <button onclick="location.href='/mail/test'">메일 테스트</button>
-    <button onclick="location.href='/mail/freemarker'">freemarker 메일 테스트</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/mail/test'">메일 테스트</button>
+    <button onclick="location.href='${pageContext.request.contextPath}/mail/freemarker'">freemarker 메일 테스트</button>
 </c:if>
 </body>
 </html>
