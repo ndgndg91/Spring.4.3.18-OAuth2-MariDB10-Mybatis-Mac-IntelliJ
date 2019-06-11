@@ -54,7 +54,11 @@
         </thead>
         <tbody>
         <c:if test="${not empty exceptMeMemberList}">
-            <c:forEach var="member" items="${exceptMeMemberList}" begin="0" end="5" step="1" varStatus="status">
+            <script>
+                console.log('${exceptMeMemberList.size()}');
+                console.log('${exceptMeMemberList}');
+            </script>
+            <c:forEach var="member" items="${exceptMeMemberList}" begin="0" step="1" varStatus="status">
                 <tr>
                     <td>${member.email}</td>
                     <td>${member.nick}</td>
@@ -86,8 +90,8 @@
                 var images = [];
 
                 msg.forEach(function (member) {
-                    images.push(member.thumbnailImageUrl === '' || member.thumbnailImageUrl === null ? member.pictureUrl : member.thumbnailImageUrl);
-                    console.log(member.thumbnailImageUrl === '' || member.thumbnailImageUrl === null ?  member.pictureUrl : member.thumbnailImageUrl);
+                    images.push(member.thumbnailImageUrl !== '' && member.thumbnailImageUrl !== null ?  member.thumbnailImageUrl : member.pictureUrl === '' || member.pictureUrl === null ? '' : member.pictureUrl);
+                    console.log(member.thumbnailImageUrl !== '' && member.thumbnailImageUrl !== null ?  member.thumbnailImageUrl : member.pictureUrl === '' || member.pictureUrl === null ? '' : member.pictureUrl);
                     html.push(
                         '<tr>',
                         '<td>',
@@ -106,10 +110,9 @@
                     console.log(member);
                 });
                 $('#applicantList').html(html.join(''));
-                images.forEach(function (image) {
-                    console.log(image);
-                    $('#applicantList .memberImg').attr('src', image);
-                })
+                $('#applicantList .memberImg').each(function (index) {
+                   $(this).attr('src', images[index]);
+                });
             });
         };
         getApplicantList();

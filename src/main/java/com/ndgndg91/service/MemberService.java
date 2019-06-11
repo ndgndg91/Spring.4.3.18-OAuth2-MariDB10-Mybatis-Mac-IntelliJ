@@ -54,6 +54,10 @@ public class MemberService implements Login {
         memberDao.insertMemberExcludePwParameter(memberDTO);
     }
 
+    public void updateMember(MemberDTO memberDTO){
+        memberDao.updateMember(memberDTO);
+    }
+
     public ResponseEntity loginProcess(String email, String password, HttpSession session) throws JsonProcessingException {
         HttpHeaders resHeaders = new HttpHeaders();
         resHeaders.add("Content-Type", "application/json;charset=UTF-8");

@@ -49,4 +49,6 @@ public class MemberDao {
     }
 
     public void joinMember(MemberDTO memberDTO) { sqlSession.insert("member.joinMember", memberDTO);}
+
+    public void updateMember(MemberDTO memberDTO) { sqlSession.update("member.updateMember", memberDTO);   }
 }

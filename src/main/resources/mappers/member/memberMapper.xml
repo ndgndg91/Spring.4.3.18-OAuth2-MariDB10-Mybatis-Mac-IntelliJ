@@ -103,4 +103,8 @@
         VALUES (#{id}, #{email}, #{pw}, #{nick}, #{realName}, #{loginType}, #{locale}, #{gender}, #{age}, #{birth})
     </insert>
 
+    <update id="updateMember" parameterType="Member">
+        UPDATE member SET picture_url = #{pictureUrl} , thumbnail_image_url = #{thumbnailImageUrl} WHERE id = #{id}
+    </update>
+
 </mapper>

@@ -11,6 +11,7 @@ import com.ndgndg91.model.ButtonVO;
 import com.ndgndg91.model.MemberDTO;
 import com.ndgndg91.service.MemberService;
 import lombok.extern.log4j.Log4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -101,9 +102,13 @@ public class KaKaoController implements Login {
         String email = outer.getAsJsonObject().get("kaccount_email").getAsString();
         Boolean emailVerified = Boolean.valueOf(outer.getAsJsonObject().get("kaccount_email_verified").getAsString());
         JsonObject properties = outer.getAsJsonObject().get("properties").getAsJsonObject();
-        String profileImageUrl = properties.get("profile_image").getAsString();
+        String profileImageUrl = properties.get("profile_image").toString().replaceAll("\"","");
+        if (StringUtils.equals(profileImageUrl, "null"))
+            profileImageUrl = "";
         String nickName = properties.get("nickname").getAsString();
-        String thumbnailImageUrl = properties.get("thumbnail_image").getAsString();
+        String thumbnailImageUrl = properties.get("thumbnail_image").toString().replaceAll("\"","");
+        if (StringUtils.equals(thumbnailImageUrl, "null"))
+            thumbnailImageUrl = "";
         return new MemberDTO.Builder(id, emailVerified ? email : KAKAO.toString()).nick(nickName).pictureUrl(profileImageUrl).thumbnailImageUrl(thumbnailImageUrl).loginType(KAKAO.toString()).build();
     }
 
@@ -120,7 +125,9 @@ public class KaKaoController implements Login {
             return "redirect:/";
         }
 
-        setMemberToSession(optionalMember.get(), session);
+        if (optionalMember.get().isPictureDifferent(kakaoUserInfo))
+            memberService.updateMember(kakaoUserInfo);
+        setMemberToSession(kakaoUserInfo, session);
         Iterator iterator = userInfo.iterator();
         printIterator(iterator);
         return "redirect:/";

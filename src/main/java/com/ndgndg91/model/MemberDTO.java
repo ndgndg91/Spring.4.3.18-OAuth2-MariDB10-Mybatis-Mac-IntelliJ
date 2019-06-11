@@ -4,6 +4,7 @@ import com.ndgndg91.model.enums.LoginType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
+import org.apache.commons.lang3.StringUtils;
 
 
 @Getter
@@ -43,6 +44,13 @@ public class MemberDTO {
         this.birth = birth;
         this.subId = subId;
         this.createTime = createTime;
+    }
+
+    public boolean isPictureDifferent(MemberDTO other){
+        if (!StringUtils.equals(this.pictureUrl, other.pictureUrl))
+            return true;
+
+        return !StringUtils.equals(this.thumbnailImageUrl, other.thumbnailImageUrl);
     }
 
     public void makePwBlank() {
