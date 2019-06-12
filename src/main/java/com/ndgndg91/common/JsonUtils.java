@@ -15,4 +15,12 @@ public class JsonUtils {
         JsonElement element = parser.parse(response);
         return element.getAsJsonObject().get(_1depthKey).getAsJsonObject().get(_2depthKey).getAsString();
     }
+
+    public static Boolean hasKey1Depth(String response, String key){
+        return Boolean.TRUE;
+    }
+
+    public static Boolean hasKey2Depth(String response, String _1depthKey, String _2depthKey){
+        return Boolean.TRUE;
+    }
 }
