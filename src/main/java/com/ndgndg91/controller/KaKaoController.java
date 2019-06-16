@@ -100,7 +100,7 @@ public class KaKaoController implements Login {
         JsonElement outer = kakaoParser.parse(userInfo.toString());
         String id = outer.getAsJsonObject().get("id").getAsString();
         String email = "";
-        if (outer.getAsJsonObject().has("kaacount_email"))
+        if (outer.getAsJsonObject().has("kaccount_email"))
             email = outer.getAsJsonObject().get("kaccount_email").getAsString();
         Boolean emailVerified = Boolean.FALSE;
         if (outer.getAsJsonObject().has("kaccount_email_verified"))
